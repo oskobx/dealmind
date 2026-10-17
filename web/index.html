@@ -548,6 +548,7 @@
   const coachBody = $('#coach-body');
   const prevBest = {};        // supplier -> {card, score} before this round's coach decision
   const curve = { rounds: 0, data: {} };
+  let isReplay = false;  // replay hides model-call noise in the ticker
   let totalRounds = null, currentRound = null, runId = null, paused = false, userPinned = false, ridgelineCount = 0, lastDraft = null;
   let focused = 'northwood';  // the one large room; the others are compact cards in the strip
   const buffer = [];
@@ -921,6 +922,7 @@
         Object.entries(ev.cards || {}).forEach(([k, card]) => roomFor(k).setCard(card));
         autoScene('rooms'); break;
       case 'negotiation_start':
+        if (isReplay) setTicker(ev.supplier === 'ridgeline' ? `Ridgeline · negotiating ${ev.deal}` : `Round ${currentRound} · ${nameOf(ev.supplier)} negotiating ${ev.deal}`, '');
         if (isRidge) { const a = armFor(ev); ridgelineCount++; const r = arm(a); r.start(ev); if (a === 'blank') r.setCard(ev.card); ping('ridgeline'); autoScene('ridgeline'); }
         else roomFor(ev.supplier).start(ev);
         break;
@@ -932,14 +934,14 @@
         else roomFor(ev.supplier).end(ev);
         break;
       case 'report': (isRidge ? arm(armFor(ev)) : roomFor(ev.supplier)).report(ev); break;
-      case 'coach_update': coachUpdate(ev); break;
+      case 'coach_update': coachUpdate(ev); if (isReplay) setTicker(`Round ${ev.round} · coach reviewing ${nameOf(ev.supplier)}`, ''); break;
       case 'general_tactics': generalTactics(ev); break;
       case 'round_end': setTimeout(() => refreshPlaybooks(true), 1500); break;
       case 'ridgeline_draft': ridgelineDraft(ev); break;
       case 'ridgeline_result': case 'ridgeline_end': arm('blank'); arm('informed'); updateVerdict(ev); ping('ridgeline'); autoScene('ridgeline'); break;
-      case 'llm_call': setTicker(`${shortModel(ev.model)} · ${ev.role} · ${Number(ev.latency_s).toFixed(1)} s`, ''); break;
-      case 'llm_retry': setTicker(`retrying ${shortModel(ev.model)} (${ev.error})`, 'retry'); break;
-      case 'router_fallback': setTicker('Switchyard down, falling back to Nano', 'retry'); break;
+      case 'llm_call': if (!isReplay) setTicker(`${shortModel(ev.model)} · ${ev.role} · ${Number(ev.latency_s).toFixed(1)} s`, ''); break;
+      case 'llm_retry': if (!isReplay) setTicker(`retrying ${shortModel(ev.model)} (${ev.error})`, 'retry'); break;
+      case 'router_fallback': if (!isReplay) setTicker('Switchyard down, falling back to Nano', 'retry'); break;
       case 'run_end': setTicker('run complete', 'idle'); refreshPlaybooks(true); break;
       case 'replay_wait': replayWait(ev); break;
       case 'replay_end': setTicker('replay finished', 'idle'); break;
@@ -956,6 +958,7 @@
     // Replay speed: a number is uniform; null means the server's default schedule.
     const speed = url.searchParams.has('speed') ? Number(url.searchParams.get('speed')) : cfg.speed;
     const replay = url.searchParams.has('speed') ? speed > 0 : cfg.mode === 'replay';
+    isReplay = replay;
     const modeEl = $('#mode');
     modeEl.textContent = !replay ? 'LIVE' : speed > 0 ? `REPLAY ×${speed}` : 'REPLAY'; modeEl.classList.toggle('live', !replay);
     roundLabel(); refreshPlaybooks(true);
