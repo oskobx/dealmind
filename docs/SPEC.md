@@ -409,12 +409,25 @@ Personas (one line each):
 
 | Role | Model | Calls |
 |---|---|---|
-| Negotiators (one specialist per supplier) | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` | many, fast |
+| Negotiators (one specialist per supplier) + report observations | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` | many, fast |
 | Tone labeler | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` | one per negotiator message |
 | Suppliers (voice only) | `Qwen/Qwen3.8-27B` | many |
 | Coach | `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B` | few, once per supplier per round |
 
-Measured latency on Oct 17: Nano ~1.1 s, Qwen ~1.3 s, Super ~3.5 s.
+Measured latency on Oct 17: Nano ~1.1 s, Qwen ~1.3 s, Super ~3.5 s; with thinking off
+(`chat_template_kwargs.enable_thinking=false`) Nano 0.3–0.8 s, Qwen ~0.5 s, Super ~1.1 s,
+Lightning 0.3–0.7 s for a one-word label.
+
+**Rate limits (measured Oct 17):** `docs/crusoe-skill.md` §6 says 30 RPM per project and per
+model without a payment method. On this account, 40 sequential calls each on Nano, Qwen and
+`nvidia/Nemotron-3.5-Lightning-30B-A3B` produced no 429, so no RPM pacing is needed
+(`llm.py` keeps an optional pacer behind `DEALMIND_RPM`). The limit that did bite is
+concurrency: Lightning returns 429 `max_requests_limit (orchestrator)` above ~3 requests in
+flight (it was tried as the tone labeler for one run and rejected for that reason), while
+Nano and Qwen took 12 parallel requests. `llm.py` therefore caps requests in flight per model
+(8 by default, 2 for Lightning) and retries 429/503 with jittered backoff. A training round is
+8 parallel negotiations: roughly 14–18 negotiator, 14–16 tone and 8 report calls on Nano,
+14–16 on Qwen, 5 on Super. Crusoe returned no `x-ratelimit-*` headers.
 
 Crusoe API notes:
 - Base URL `https://api.inference.crusoecloud.com/v1`, standard `openai` SDK.
@@ -612,7 +625,7 @@ Three minutes:
 | Time | On screen |
 |---|---|
 | 0:00–0:20 | Pitch: a furniture chain buys from many suppliers; every negotiation teaches the next one. |
-| 0:20–1:20 | Live run, rounds 1–5. Four lanes, one per supplier: offers scrolling, scores per round. Round 1: Northwood walks away. Then scores climb. |
+| 0:20–1:20 | **Round 1 runs live**: four lanes, one per supplier, offers scrolling, Northwood walks away. Then **a replay of a pre-recorded full 5-round run** (`replay.py runs/demo --speed N`) shows the scores climbing. Changed Oct 17: a round took 36–48 s when the endpoint was quiet and 3.5–6.5 min when it was congested (Nano latency went from ~1.5 s to 25 s median with connection errors), so a full run is too slow for the slot and even round 1 is at the endpoint's mercy. If round 1 stalls on stage, cut straight to the replay. |
 | 1:20–2:00 | The playbook, round 1 vs round 5 side by side, plus one experiment-log line. |
 | 2:00–2:40 | Ridgeline: blank vs informed specialist. The informed one wins. |
 | 2:40–3:00 | The moat: supplier knowledge compounds; competitors can't copy it. |

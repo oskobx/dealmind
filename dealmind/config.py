@@ -266,11 +266,21 @@ FINAL_PRICE_FACTOR: dict[str, float] = {"strong": 1.04, "weak": 1.00}
 MODEL_NANO = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
 MODEL_SUPER = "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
 MODEL_QWEN = "Qwen/Qwen3.8-27B"
+MODEL_LIGHTNING = "nvidia/Nemotron-3.5-Lightning-30B-A3B"
 
+# Crusoe rate limits are per model (crusoe-skill.md §6), so roles are spread across models.
 MODEL_NEGOTIATOR = MODEL_NANO
-MODEL_TONE = MODEL_NANO
+MODEL_REPORT = MODEL_NANO  # §9.1 observations, written in the negotiator's own session
+MODEL_TONE = MODEL_NANO  # Lightning was tried on Oct 17 and 429s above ~3 requests in flight (see llm.py)
 MODEL_SUPPLIER = MODEL_QWEN
 MODEL_COACH = MODEL_SUPER
+
+MODEL_SHORT_NAMES: dict[str, str] = {
+    MODEL_NANO: "Nano",
+    MODEL_LIGHTNING: "Lightning",
+    MODEL_QWEN: "Qwen",
+    MODEL_SUPER: "Super",
+}
 
 CRUSOE_BASE_URL = "https://api.inference.crusoecloud.com/v1"
 API_KEY_ENV = "CRUSOE_API_KEY"  # the name only; the value is never logged

@@ -38,9 +38,15 @@ load_dotenv(override=True)
 RETRYABLE = (RateLimitError, InternalServerError, APIConnectionError, APITimeoutError)
 JITTER_SECONDS = 0.5
 RETRY_AFTER_CAP_SECONDS = 30.0
-# crusoe-skill.md §6: 30 RPM per model without a payment method. Stay just under it by default.
-RPM_LIMIT = int(os.environ.get("DEALMIND_RPM", "28"))
 REQUEST_TIMEOUT_SECONDS = 90.0
+# crusoe-skill.md §6 describes 30 RPM per model without a payment method. Measured on Oct 17 on this
+# account: 40 sequential calls each on Nano, Qwen and Lightning with no 429, so the RPM pacer is off
+# by default (DEALMIND_RPM=N turns it on). What did fail was concurrency: Lightning returns 429
+# "max_requests_limit (orchestrator)" above ~3 requests in flight, while Nano and Qwen took 12 in
+# parallel. So every model gets an in-flight cap instead.
+RPM_LIMIT = int(os.environ.get("DEALMIND_RPM", "0"))  # 0 = off
+MAX_INFLIGHT = int(os.environ.get("DEALMIND_MAX_INFLIGHT", "8"))
+MAX_INFLIGHT_PER_MODEL: dict[str, int] = {config.MODEL_LIGHTNING: 2}
 
 
 @dataclass(frozen=True)
@@ -124,7 +130,24 @@ class _Pacer:
             waited += sleep_for
 
 
-_pacer = _Pacer(RPM_LIMIT)
+_pacer = _Pacer(RPM_LIMIT) if RPM_LIMIT > 0 else None
+
+
+class _Gate:
+    """Caps the number of requests in flight per model (the limit Crusoe actually enforced on Oct 17)."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._slots: dict[str, threading.Semaphore] = {}
+
+    def slot(self, model: str) -> threading.Semaphore:
+        with self._lock:
+            if model not in self._slots:
+                self._slots[model] = threading.Semaphore(MAX_INFLIGHT_PER_MODEL.get(model, MAX_INFLIGHT))
+            return self._slots[model]
+
+
+_gate = _Gate()
 
 
 def _retry_after(exc: Exception) -> float | None:
@@ -164,9 +187,11 @@ def _create(role: str, model: str, messages: list[dict], max_tokens: int, seed: 
 def _attempt(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None):
     """One paced request with backoff on transient errors. Returns (raw_response, attempts)."""
     for attempt, delay in enumerate([*config.RETRY_BACKOFF_SECONDS, None], start=1):
-        _pacer.wait(model)
+        if _pacer is not None:
+            _pacer.wait(model)
         try:
-            return _create(role, model, messages, max_tokens, seed), attempt
+            with _gate.slot(model):
+                return _create(role, model, messages, max_tokens, seed), attempt
         except RETRYABLE as exc:
             if delay is None:
                 raise LLMError(f"{role}/{model}: gave up after {attempt} attempts: {type(exc).__name__}") from exc

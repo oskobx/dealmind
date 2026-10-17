@@ -43,9 +43,17 @@ but say what you changed and why.
 
 | Role | Model ID |
 |---|---|
-| Negotiators + tone labeler | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` |
+| Negotiators + tone labeler + report observations | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` |
 | Suppliers (voice only) | `Qwen/Qwen3.8-27B` |
 | Coach | `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B` |
+
+Rate limits, measured Oct 17 on this account: `docs/crusoe-skill.md` §6 says 30 RPM per
+project and per model, but 40 sequential calls each on Nano, Qwen and
+`nvidia/Nemotron-3.5-Lightning-30B-A3B` produced no 429. What did fail is concurrency:
+Lightning returns 429 `max_requests_limit (orchestrator)` above ~3 requests in flight, while
+Nano and Qwen took 12 in parallel. So the tone labeler stays on Nano (Lightning was tried and
+rejected), `llm.py` caps requests in flight per model (8, Lightning 2), and the RPM pacer is
+off unless `DEALMIND_RPM` is set.
 
 Optional (Step 4.5, flag off by default): negotiator calls can route through NVIDIA
 NeMo Switchyard's escalation router, Nano → Super. See SPEC §7.1.
