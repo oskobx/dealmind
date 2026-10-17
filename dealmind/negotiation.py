@@ -179,10 +179,16 @@ def negotiate(
     believed_type: str = config.DEFAULT_BELIEVED_TYPE,
     seed: int | None = None,
     say=None,
+    arm: str | None = None,
 ) -> NegotiationResult:
-    """Run one negotiation. `say(text)` receives human-readable progress lines if given."""
+    """Run one negotiation. `say(text)` receives human-readable progress lines if given. `arm` tags
+    the events of a Ridgeline arm ("blank" / "informed") for the UI."""
     target = deal.target
     session = NegotiatorSession(supplier.name, deal, card, briefing, seed)
+    # Every event of this negotiation carries the same id (and the arm, for the held-out test).
+    tag: dict[str, object] = {"negotiation_id": session.session_id}
+    if arm:
+        tag["arm"] = arm
     exchanges: list[Exchange] = []
     labels: list[str] = []
     obs = Observed()
@@ -191,7 +197,7 @@ def negotiate(
     outcome, final, closed_by = "no_deal", None, None
     tell = say or (lambda _text: None)
 
-    events.emit("negotiation_start", supplier=supplier.key, deal=deal.label, target=target, card=card.as_dict())
+    events.emit("negotiation_start", supplier=supplier.key, deal=deal.label, target=target, card=card.as_dict(), **tag)
     tell(f"[{supplier.name}] {deal.label}, target {target:.0f}/piece, card: {card_label(card)}")
 
     for round_no in range(1, ROUNDS + 1):
@@ -199,7 +205,7 @@ def negotiate(
         turn = session.turn(round_no, plan, last_counter, supplier_message)
         exchange = Exchange(round_no, turn)
         exchanges.append(exchange)
-        events.emit("negotiator_turn", supplier=supplier.key, round=round_no, action=turn.action, offer=turn.offer.__dict__, message=turn.message, served_by=turn.served_by, deviations=turn.deviations)
+        events.emit("negotiator_turn", supplier=supplier.key, round=round_no, action=turn.action, offer=turn.offer.__dict__, message=turn.message, served_by=turn.served_by, deviations=turn.deviations, **tag)
 
         if turn.action == "accept":
             outcome, final, closed_by = "deal", last_counter, "negotiator_accepted"
@@ -217,12 +223,12 @@ def negotiate(
             obs = replace(obs, tone=majority_tone(labels))
             if round_no == 2:
                 obs = replace(obs, speed=observed_speed(opening.price, turn.offer.price, supplier_ask.price))
-        events.emit("tone", supplier=supplier.key, round=round_no, label=exchange.tone_label, observed=obs.__dict__)
+        events.emit("tone", supplier=supplier.key, round=round_no, label=exchange.tone_label, observed=obs.__dict__, **tag)
 
         decision = respond(supplier, target, round_no, turn.offer, obs)
         exchange.decision = decision
         exchange.supplier_message = supplier_voice(supplier, decision, turn.message, turn.offer, seed)
-        events.emit("supplier_turn", supplier=supplier.key, round=round_no, action=decision.action, offer=decision.offer.__dict__ if decision.offer else None, message=exchange.supplier_message)
+        events.emit("supplier_turn", supplier=supplier.key, round=round_no, action=decision.action, offer=decision.offer.__dict__ if decision.offer else None, message=exchange.supplier_message, **tag)
         tell(f"     [tone: {exchange.tone_label}]\n  R{round_no} SUPPLIER {decision.action}" + (f" {_fmt(decision.offer)}" if decision.offer else "") + f"\n     \"{exchange.supplier_message}\"")
 
         if decision.action == "walk_away":
@@ -246,7 +252,7 @@ def negotiate(
 
     score = score_offer(final, target) if outcome == "deal" else 0.0
     escalated = sum(1 for ex in exchanges if ex.negotiator.served_by and ex.negotiator.served_by != config.MODEL_NEGOTIATOR)
-    events.emit("negotiation_end", supplier=supplier.key, outcome=outcome, final=final.__dict__ if final else None, score=round(score, 1), closed_by=closed_by)
+    events.emit("negotiation_end", supplier=supplier.key, outcome=outcome, final=final.__dict__ if final else None, score=round(score, 1), closed_by=closed_by, **tag)
     tell(f"  => {outcome.upper()}" + (f" at {_fmt(final)}" if final else "") + f", score {score:.1f}")
     return NegotiationResult(supplier.key, deal, card, outcome, final, score, closed_by, exchanges, obs, escalated, session)
 

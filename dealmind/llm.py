@@ -188,7 +188,7 @@ def _rate_headers(headers) -> dict[str, str]:
 # --- the call ----------------------------------------------------------------
 
 
-def _create(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None, client: OpenAI | None = None):
+def _create(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None, client: OpenAI | None = None, headers: dict[str, str] | None = None):
     settings = ROLE_SETTINGS.get(role, DEFAULT_SETTINGS)
     kwargs = dict(
         model=model,
@@ -201,17 +201,28 @@ def _create(role: str, model: str, messages: list[dict], max_tokens: int, seed: 
     )
     if seed is not None:
         kwargs["seed"] = seed
+    if headers:
+        kwargs["extra_headers"] = headers
     return (client or _get_client()).chat.completions.with_raw_response.create(**kwargs)
 
 
-def _attempt(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None, client: OpenAI | None = None, retry: bool = True):
+def _attempt(
+    role: str,
+    model: str,
+    messages: list[dict],
+    max_tokens: int,
+    seed: int | None,
+    client: OpenAI | None = None,
+    retry: bool = True,
+    headers: dict[str, str] | None = None,
+):
     """One paced request with backoff on transient errors. Returns (raw_response, attempts)."""
     for attempt, delay in enumerate([*config.RETRY_BACKOFF_SECONDS, None], start=1):
         if _pacer is not None:
             _pacer.wait(model)
         try:
             with _gate.slot(model):
-                return _create(role, model, messages, max_tokens, seed, client), attempt
+                return _create(role, model, messages, max_tokens, seed, client, headers), attempt
         except RETRYABLE as exc:
             if delay is None or not retry:
                 raise LLMError(f"{role}/{model}: gave up after {attempt} attempts: {type(exc).__name__}") from exc
@@ -230,10 +241,11 @@ def _complete(
     client: OpenAI | None = None,
     retry: bool = True,
     via_router: bool = False,
+    headers: dict[str, str] | None = None,
 ) -> LLMResponse:
     """Call a model and return content plus metadata. Logs an `llm_call` event (never the key)."""
     started = time.perf_counter()
-    raw, attempts = _attempt(role, model, messages, max_tokens, seed, client, retry)
+    raw, attempts = _attempt(role, model, messages, max_tokens, seed, client, retry, headers)
     completion = raw.parse()
     message = completion.choices[0].message.model_dump()
     content = (message.get("content") or "").strip()
@@ -242,7 +254,7 @@ def _complete(
 
     if not content:  # §7.2: a reasoning phase ate the budget; retry once with more room
         events.emit("llm_empty_content", role=role, model=model, finish_reason=finish_reason, max_tokens=max_tokens)
-        raw, attempts = _attempt(role, model, messages, max(config.RETRY_MAX_TOKENS, 2 * max_tokens), seed, client, retry)
+        raw, attempts = _attempt(role, model, messages, max(config.RETRY_MAX_TOKENS, 2 * max_tokens), seed, client, retry, headers)
         completion = raw.parse()
         message = completion.choices[0].message.model_dump()
         content = (message.get("content") or "").strip()
@@ -277,6 +289,7 @@ def _complete(
         finish_reason=response.finish_reason,
         attempts=response.attempts,
         via_router=via_router,
+        router_model=raw.headers.get("x-model-router-selected-model") if via_router else None,
         rate=_rate_headers(raw.headers),
     )
     return response
@@ -288,12 +301,15 @@ def chat_full(
     messages: list[dict],
     max_tokens: int = config.DEFAULT_MAX_TOKENS,
     seed: int | None = None,
+    session_id: str | None = None,
 ) -> LLMResponse:
     """Call a model. With the Switchyard router on, negotiator calls go to the proxy as model
-    "negotiator" (§7.1); if the proxy is down or errors, fall back to direct Nano and log it."""
+    "negotiator" (§7.1) with one x-switchyard-session-id per negotiation so the escalation streak
+    persists across turns; if the proxy is down or errors, fall back to direct Nano and log it."""
     if role == "negotiator" and _router_base_url:
+        headers = {"x-switchyard-session-id": session_id} if session_id else None
         try:
-            return _complete(role, config.SWITCHYARD_MODEL, messages, max_tokens, seed, _get_router_client(), retry=False, via_router=True)
+            return _complete(role, config.SWITCHYARD_MODEL, messages, max_tokens, seed, _get_router_client(), retry=False, via_router=True, headers=headers)
         except Exception as exc:  # never crash the demo over the router
             events.emit("router_fallback", error=f"{type(exc).__name__}: {str(exc)[:200]}")
     return _complete(role, model, messages, max_tokens, seed)
@@ -305,8 +321,9 @@ def chat(
     messages: list[dict],
     max_tokens: int = config.DEFAULT_MAX_TOKENS,
     seed: int | None = None,
+    session_id: str | None = None,
 ) -> str:
-    return chat_full(role, model, messages, max_tokens, seed).content
+    return chat_full(role, model, messages, max_tokens, seed, session_id).content
 
 
 # --- JSON helpers ------------------------------------------------------------
@@ -366,9 +383,10 @@ def chat_json(
     messages: list[dict],
     max_tokens: int = config.DEFAULT_MAX_TOKENS,
     seed: int | None = None,
+    session_id: str | None = None,
 ) -> tuple[dict | None, LLMResponse]:
     """Ask for JSON; on a parse failure retry once with 'Return valid JSON only.' (CLAUDE.md conventions)."""
-    response = chat_full(role, model, messages, max_tokens, seed)
+    response = chat_full(role, model, messages, max_tokens, seed, session_id)
     parsed = extract_json(response.content)
     if parsed is not None:
         return parsed, response
@@ -378,7 +396,7 @@ def chat_json(
         {"role": "assistant", "content": response.content or "(empty)"},
         {"role": "user", "content": "Return valid JSON only."},
     ]
-    response = chat_full(role, model, retry_messages, max_tokens, seed)
+    response = chat_full(role, model, retry_messages, max_tokens, seed, session_id)
     parsed = extract_json(response.content)
     if parsed is None:
         events.emit("json_parse_failed", role=role, model=model, attempt=2)

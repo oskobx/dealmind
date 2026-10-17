@@ -96,7 +96,8 @@ def write_observations(result: NegotiationResult) -> str:
 
 def build_report(result: NegotiationResult, round_no: int) -> Report:
     report = Report(build_facts(result, round_no), write_observations(result))
-    events.emit("report", supplier=result.supplier_key, round=round_no, facts=report.facts, observations=report.observations)
+    negotiation_id = result.session.session_id if result.session else None
+    events.emit("report", supplier=result.supplier_key, round=round_no, negotiation_id=negotiation_id, facts=report.facts, observations=report.observations)
     return report
 
 

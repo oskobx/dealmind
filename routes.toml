@@ -1,0 +1,50 @@
+# NeMo Switchyard routing profile for DealMind negotiators (SPEC §7.1).
+# The server reads TOML (not YAML). The key is NEVER written here: `api_key_env`
+# names the environment variable, exported from .env before starting the server.
+#
+#   set -a; source .env; set +a
+#   switchyard-server --config routes.toml --dry-run
+#   switchyard-server --config routes.toml --host 127.0.0.1 --port 4000
+#
+# Clients call model "negotiator" at http://localhost:4000/v1 and send an
+# `x-switchyard-session-id` header (one per negotiation) so the escalation streak
+# persists across turns. The response header `x-model-router-selected-model`
+# names the model that served the turn.
+
+schema_version = 1
+
+[llm_clients.crusoe]
+format = "openai_chat"
+base_url = "https://api.inference.crusoecloud.com/v1"
+api_key_env = "CRUSOE_API_KEY"
+timeout_ms = 120000
+
+# The judge decides whether the weak tier is in trouble. Switchyard requires a
+# distinct model id per target within a route, so the judge cannot be Nano (the
+# weak tier) or Super (the strong tier). Qwen takes ~12 requests in flight on
+# Crusoe; Lightning throttles above ~3, so Qwen it is.
+[targets.judge]
+id = "Qwen/Qwen3.8-27B"
+llm_client = "crusoe"
+# The judge must return JSON in `content`; Qwen reasons first unless told not to.
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+
+[targets.weak]
+id = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+llm_client = "crusoe"
+
+[targets.strong]
+id = "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+llm_client = "crusoe"
+
+[routes.negotiator]
+id = "negotiator"
+type = "llm_classifier"
+mode = "escalation"
+classifier_target = "judge"
+strong_target = "strong"
+weak_target = "weak"
+max_output_tokens = 1600
+# confirmations = 1 latches on the first escalate verdict, so Super can fire inside a
+# 3-round negotiation; the client still sends one x-switchyard-session-id per negotiation.
+escalation = { confirmations = 1, recent_turn_window = 28, window_message_chars = 500 }

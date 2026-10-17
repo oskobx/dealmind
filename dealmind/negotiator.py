@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import math
+import uuid
 from dataclasses import dataclass
 
 from dealmind import config, events, llm
@@ -249,12 +250,13 @@ class NegotiatorSession:
         self.system = system_prompt(supplier_name, deal, card, briefing)
         self.history: list[dict] = []
         self.seed = seed
+        self.session_id = uuid.uuid4().hex  # §7.1: one Switchyard session per negotiation
 
     def turn(self, round_no: int, plan: Plan, last_counter: Offer | None, supplier_message: str | None) -> Turn:
         user = round_prompt(round_no, plan, last_counter, supplier_message, self.deal.target)
         messages = [{"role": "system", "content": self.system}, *self.history, {"role": "user", "content": user}]
         try:
-            parsed, response = llm.chat_json("negotiator", config.MODEL_NEGOTIATOR, messages, seed=self.seed)
+            parsed, response = llm.chat_json("negotiator", config.MODEL_NEGOTIATOR, messages, seed=self.seed, session_id=self.session_id)
             served_by, raw = response.served_by, response.content
         except llm.LLMError as exc:
             events.emit("negotiator_llm_error", error=str(exc))

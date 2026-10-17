@@ -111,7 +111,7 @@ def training_round(state: PlaybookState, round_no: int, deals_per_supplier: int,
 
 
 def _ridgeline_deal(arm: str, card: Card, briefing: str, believed: str, deal: Deal, seed: int) -> NegotiationResult:
-    return negotiate(config.SUPPLIERS[config.HELD_OUT_SUPPLIER], deal, card, briefing, believed, seed)
+    return negotiate(config.SUPPLIERS[config.HELD_OUT_SUPPLIER], deal, card, briefing, believed, seed, arm=arm)
 
 
 def ridgeline_test(state: PlaybookState, run_dir: Path, say, counter: CallCounter) -> dict:
@@ -167,6 +167,16 @@ def ridgeline_test(state: PlaybookState, run_dir: Path, say, counter: CallCounte
         "calls": counter.calls(RIDGELINE_ROUND),
     }
     (run_dir / "ridgeline.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
+    events.emit(
+        "ridgeline_result",
+        supplier=supplier.key,
+        blank_mean=means["blank"],
+        informed_mean=means["informed"],
+        difference=difference,
+        blank_card=default_card().as_dict(),
+        informed_card=card.as_dict(),
+        informed_briefing=briefing,
+    )
     events.emit("ridgeline_end", means=means, difference=difference, informed_card=card.as_dict(), seconds=summary["seconds"])
     say(f"  blank mean {means['blank']:.1f} | informed mean {means['informed']:.1f} | difference {difference:+.1f}")
     say(f"  ridgeline: {summary['seconds']:.1f} s | calls: {counter.line(RIDGELINE_ROUND)}")
