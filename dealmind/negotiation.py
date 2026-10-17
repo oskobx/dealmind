@@ -221,7 +221,10 @@ def main() -> None:
     parser.add_argument("--briefing", default="")
     parser.add_argument("--believed", default=config.DEFAULT_BELIEVED_TYPE, choices=["strong", "weak"])
     parser.add_argument("--calls", action="store_true", help="print one line per model call")
+    parser.add_argument("--router", choices=["switchyard"], default=None, help="route negotiator calls through NeMo Switchyard (§7.1)")
     args = parser.parse_args()
+    if args.router == "switchyard":
+        llm.set_router(config.SWITCHYARD_BASE_URL)
 
     supplier = config.SUPPLIERS[args.supplier]
     if args.card == "default":
@@ -235,11 +238,15 @@ def main() -> None:
     deal = make_deal(args.product, args.quantity) if args.product and args.quantity else random_deal(args.seed)
 
     if args.calls:
-        events.current().listeners.append(
-            lambda e: print(f"    · {e['role']} {e['served_by']} {e['latency_s']}s tokens {e['prompt_tokens']}+{e['completion_tokens']} cached {e['cached_tokens']}")
-            if e["kind"] == "llm_call"
-            else None
-        )
+
+        def show(e: dict) -> None:
+            if e["kind"] == "llm_call":
+                via = " via router" if e.get("via_router") else ""
+                print(f"    · {e['role']} served_by={e['served_by']}{via} {e['latency_s']}s tokens {e['prompt_tokens']}+{e['completion_tokens']} cached {e['cached_tokens']}")
+            elif e["kind"] == "router_fallback":
+                print(f"    · router_fallback: {e['error']}")
+
+        events.current().listeners.append(show)
     negotiate(supplier, deal, card, args.briefing, args.believed, args.seed, say=print)
 
 
