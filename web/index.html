@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DealMind</title>
+<script src="/web/vendor/chart.umd.js"></script>
+<script src="/web/vendor/marked.min.js"></script>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #131315;
+    --surface: #1a1a19;
+    --surface-2: #222224;
+    --surface-3: #2b2b2e;
+    --border: #323236;
+    --text: #f0efec;
+    --text-2: #c3c2b7;
+    --muted: #8d8d86;
+    --neg: #3987e5;        /* negotiator bubbles */
+    --neg-soft: rgba(57, 135, 229, 0.16);
+    --sup-soft: #2a2825;   /* supplier bubbles */
+    --good: #0ca30c;
+    --warn: #fab219;
+    --serious: #ec835a;
+    --critical: #d03b3b;
+    --s-northwood: #3987e5;
+    --s-quickfurn: #d95926;
+    --s-harlow: #199e70;
+    --s-valuecraft: #c98500;
+    --s-ridgeline: #9085e9;
+    --radius: 14px;
+    --fs: 17px;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: var(--fs); }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+  /* ---------- header ---------- */
+  header {
+    height: 60px; flex: 0 0 60px; display: flex; align-items: center; gap: 22px; padding: 0 20px;
+    border-bottom: 1px solid var(--border); background: var(--surface);
+  }
+  .brand { font-weight: 800; font-size: 1.45rem; letter-spacing: 0.01em; }
+  .brand small { font-weight: 500; color: var(--muted); font-size: 0.85rem; margin-left: 10px; }
+  .round { font-size: 1.2rem; font-weight: 600; color: var(--text-2); }
+  .round b { color: var(--text); }
+  nav { display: flex; gap: 6px; margin-left: 8px; }
+  nav button {
+    background: transparent; color: var(--text-2); border: 1px solid transparent; border-radius: 10px;
+    font: inherit; font-size: 1rem; padding: 7px 14px; cursor: pointer;
+  }
+  nav button:hover { background: var(--surface-2); }
+  nav button.active { background: var(--surface-3); color: var(--text); border-color: var(--border); }
+  nav button .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-left: 8px; vertical-align: middle; visibility: hidden; }
+  nav button.ping .dot { visibility: visible; }
+  .spacer { flex: 1; }
+  .ticker { color: var(--muted); font-size: 0.95rem; display: flex; align-items: center; gap: 10px; max-width: 520px; white-space: nowrap; overflow: hidden; }
+  .ticker .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--good); flex: none; animation: pulse 1.2s ease-in-out infinite; }
+  .ticker.retry .pulse { background: var(--warn); }
+  .ticker.idle .pulse { animation: none; background: var(--muted); }
+  @keyframes pulse { 0%,100% { opacity: 0.35; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+  .mode { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); color: var(--text-2); }
+  .mode.live { color: var(--good); border-color: var(--good); }
+  .btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 10px; font: inherit; font-size: 0.95rem; padding: 6px 12px; cursor: pointer; }
+  .btn:hover { background: var(--surface-3); }
+
+  /* ---------- scenes ---------- */
+  main { flex: 1; min-height: 0; position: relative; }
+  .scene { position: absolute; inset: 0; padding: 14px; display: none; }
+  .scene.active { display: grid; }
+
+  /* rooms scene */
+  #scene-rooms { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 460px; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+  #scene-rooms > div, .rl-grid > div { min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+  #scene-rooms > div > .panel, .rl-grid > div > .panel { flex: 1; }
+  aside { grid-column: 3; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .panel-head { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex: none; }
+  .panel-head h2 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+  .panel-body { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 16px; scroll-behavior: smooth; }
+
+  /* room */
+  .room { position: relative; }
+  .room.flash { animation: flash 1.8s ease-out 1; }
+  @keyframes flash {
+    0% { box-shadow: 0 0 0 3px var(--critical), 0 0 60px rgba(208,59,59,0.8); background: #3a1a1a; }
+    60% { box-shadow: 0 0 0 3px var(--critical), 0 0 30px rgba(208,59,59,0.5); background: #2a1616; }
+    100% { box-shadow: none; background: var(--surface); }
+  }
+  .room-head { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px 10px; border-bottom: 1px solid var(--border); flex: none; }
+  .room-title { display: flex; align-items: center; gap: 12px; }
+  .room-title .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .room-title h2 { margin: 0; font-size: 1.2rem; font-weight: 700; flex: 1; }
+  .scores { color: var(--text-2); font-size: 0.95rem; }
+  .scores b { color: var(--text); }
+  .card { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .card .k { font-size: 0.82rem; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); }
+  .card .k.changed { border-color: var(--warn); color: var(--warn); font-weight: 600; }
+  .card .lbl { color: var(--muted); font-size: 0.82rem; margin-right: 2px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab { font-size: 0.9rem; padding: 4px 10px; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--text-2); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; }
+  .tab.active { background: var(--surface-3); color: var(--text); }
+  .tab .st { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .tab .st.live { background: var(--good); animation: pulse 1.2s ease-in-out infinite; }
+  .tab .st.deal { background: var(--good); }
+  .tab .st.walk { background: var(--critical); }
+  .tab .st.nodeal { background: var(--muted); }
+  .thread { display: none; flex-direction: column; gap: 14px; }
+  .thread.active { display: flex; }
+  .placeholder { color: var(--muted); text-align: center; padding: 40px 10px; font-size: 1rem; }
+
+  .msg { display: flex; flex-direction: column; max-width: 86%; gap: 5px; }
+  .msg.neg { align-self: flex-start; align-items: flex-start; }
+  .msg.sup { align-self: flex-end; align-items: flex-end; }
+  .who { font-size: 0.82rem; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+  .who b { color: var(--text-2); font-weight: 600; }
+  .bubble { padding: 11px 15px; border-radius: 16px; line-height: 1.38; font-size: 1.02rem; }
+  .neg .bubble { background: var(--neg-soft); border: 1px solid rgba(57,135,229,0.35); border-bottom-left-radius: 5px; }
+  .sup .bubble { background: var(--sup-soft); border: 1px solid var(--border); border-bottom-right-radius: 5px; }
+  .sup.walk .bubble { background: #3a1818; border-color: var(--critical); color: #ffd9d9; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { font-size: 0.86rem; padding: 3px 9px; border-radius: 7px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); }
+  .chip.price { color: var(--text); font-weight: 700; }
+  .chip.accept { color: var(--good); border-color: var(--good); font-weight: 700; }
+  .tag { font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-2); }
+  .tag.tone-firm { color: var(--serious); border-color: var(--serious); }
+  .tag.tone-cooperative { color: var(--good); border-color: var(--good); }
+  .tag.escalated { color: var(--warn); border-color: var(--warn); font-weight: 700; }
+
+  .outcome { align-self: center; display: flex; align-items: center; gap: 14px; padding: 9px 18px; border-radius: 12px; font-weight: 800; font-size: 1.05rem; letter-spacing: 0.05em; margin-top: 4px; }
+  .outcome .score { font-size: 1.5rem; font-weight: 800; letter-spacing: 0; }
+  .outcome.deal { background: rgba(12,163,12,0.16); border: 1px solid var(--good); color: #b9f0b9; }
+  .outcome.walk { background: rgba(208,59,59,0.2); border: 1px solid var(--critical); color: #ffc9c9; animation: blink 0.5s steps(2) 4; }
+  .outcome.nodeal { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); }
+  @keyframes blink { 50% { opacity: 0.35; } }
+  .note { align-self: stretch; color: var(--text-2); font-size: 0.92rem; font-style: italic; padding: 8px 12px; border-left: 3px solid var(--neg); background: rgba(255,255,255,0.02); border-radius: 0 10px 10px 0; }
+  .note b { color: var(--muted); font-style: normal; font-weight: 600; margin-right: 6px; }
+  .typing { color: var(--muted); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+  .typing.sup { align-self: flex-end; }
+  .typing .dots span { display: inline-block; width: 6px; height: 6px; margin-right: 3px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
+  .typing .dots span:nth-child(2) { animation-delay: 0.2s; } .typing .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-5px); opacity: 1; } }
+
+  /* coach */
+  #coach .panel-body { display: flex; flex-direction: column; gap: 12px; }
+  .decision { border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; background: var(--surface-2); display: flex; flex-direction: column; gap: 6px; animation: fadein 0.4s ease-out; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .decision.kept { border-left: 4px solid var(--good); }
+  .decision.discarded { border-left: 4px solid var(--serious); }
+  .decision.baseline { border-left: 4px solid var(--muted); }
+  .decision.tactics { border-left: 4px solid var(--s-ridgeline); }
+  .dhead { display: flex; align-items: center; gap: 10px; }
+  .dhead .sup { font-weight: 700; flex: 1; }
+  .dhead .rnd { color: var(--muted); font-size: 0.9rem; }
+  .pill { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 6px; }
+  .pill.kept { background: rgba(12,163,12,0.2); color: #9fe49f; }
+  .pill.discarded { background: rgba(236,131,90,0.2); color: #ffb897; }
+  .pill.baseline { background: var(--surface-3); color: var(--text-2); }
+  .dline { font-size: 0.95rem; color: var(--text-2); }
+  .dline b { color: var(--text); }
+  .dline .arrow { color: var(--muted); margin: 0 6px; }
+  .dline .up { color: var(--good); font-weight: 700; } .dline .down { color: var(--serious); font-weight: 700; }
+  .dwhy { font-size: 0.92rem; color: var(--text-2); line-height: 1.35; }
+  .dwhy::before { content: "why "; color: var(--muted); font-weight: 600; }
+  .decision ul { margin: 2px 0 0 18px; padding: 0; font-size: 0.92rem; color: var(--text-2); }
+
+  #chart-panel { flex: 0 0 300px; }
+  #chart-panel .panel-body { padding: 8px 12px 10px; overflow: hidden; }
+  #chart-panel canvas { width: 100% !important; height: 100% !important; }
+
+  /* playbook scene */
+  #scene-playbook { grid-template-rows: auto 1fr; gap: 14px; }
+  .pb-controls { display: flex; align-items: center; gap: 18px; padding: 10px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .pb-controls h2 { margin: 0; font-size: 1.15rem; }
+  .pb-controls input[type=range] { flex: 1; accent-color: var(--neg); height: 6px; }
+  .pb-controls .lbl { font-size: 1.05rem; color: var(--text-2); min-width: 120px; }
+  .pb-controls .lbl b { color: var(--text); }
+  .pb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-height: 0; }
+  .pb-grid.single { grid-template-columns: 1fr; }
+  .md { font-size: 0.98rem; line-height: 1.45; color: var(--text-2); }
+  .md h1 { font-size: 1.3rem; color: var(--text); margin: 4px 0 12px; }
+  .md h2 { font-size: 1.1rem; color: var(--text); margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .md h3 { font-size: 1.02rem; color: var(--text); margin: 14px 0 6px; }
+  .md ul { margin: 4px 0 8px 20px; padding: 0; }
+  .md li { margin: 2px 0; }
+  .md strong { color: var(--text); }
+  .md table { border-collapse: collapse; width: 100%; font-size: 0.9rem; margin: 8px 0; }
+  .md th, .md td { border: 1px solid var(--border); padding: 5px 8px; text-align: left; }
+  .md th { background: var(--surface-2); color: var(--text); }
+  .md code { font-family: ui-monospace, Menlo, monospace; background: var(--surface-2); padding: 1px 5px; border-radius: 5px; font-size: 0.9em; }
+
+  /* ridgeline scene */
+  #scene-ridgeline { grid-template-rows: auto 1fr; gap: 14px; }
+  .rl-banner { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; padding: 14px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .rl-banner h2 { margin: 0 0 4px; font-size: 1.25rem; }
+  .rl-banner p { margin: 0; color: var(--text-2); font-size: 0.98rem; }
+  .verdict { text-align: center; min-width: 260px; }
+  .verdict .delta { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .verdict .delta.win { color: var(--good); } .verdict .delta.lose { color: var(--critical); }
+  .verdict .sub { color: var(--muted); font-size: 0.95rem; }
+  .rl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-height: 0; }
+  .arm-head { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); flex: none; }
+  .arm-title { display: flex; align-items: center; gap: 12px; }
+  .arm-title h2 { margin: 0; font-size: 1.2rem; flex: 1; }
+  .mean { font-size: 1.6rem; font-weight: 800; }
+  .mean small { font-size: 0.85rem; color: var(--muted); font-weight: 500; margin-left: 6px; }
+  .briefing { color: var(--text-2); font-size: 0.95rem; font-style: italic; line-height: 1.35; }
+  .briefing b { color: var(--muted); font-style: normal; font-weight: 600; margin-right: 6px; }
+
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--surface-3); border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 12px; font-size: 1rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">DealMind<small>Crusoe Managed Inference · Nemotron · Qwen</small></div>
+  <div class="round" id="round-label">waiting for a run…</div>
+  <nav>
+    <button data-scene="rooms" class="active">Negotiations<span class="dot"></span></button>
+    <button data-scene="playbook">Playbook<span class="dot"></span></button>
+    <button data-scene="ridgeline">Ridgeline test<span class="dot"></span></button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="ticker idle" id="ticker"><span class="pulse"></span><span id="ticker-text">connecting…</span></div>
+  <span class="mode" id="mode">…</span>
+  <button class="btn" id="pause" title="space">Pause</button>
+</header>
+
+<main>
+  <section id="scene-rooms" class="scene active">
+    <div id="rooms-slot-0"></div><div id="rooms-slot-1"></div>
+    <aside>
+      <div class="panel" id="coach">
+        <div class="panel-head"><h2>Coach</h2><span class="tag" style="margin-left:auto">Nemotron Super 120B</span></div>
+        <div class="panel-body" id="coach-body"><div class="placeholder">The coach speaks after each round: one knob at a time, kept only if it wins.</div></div>
+      </div>
+      <div class="panel" id="chart-panel">
+        <div class="panel-head"><h2>Learning curve</h2><span class="tag" style="margin-left:auto">mean deal score per round</span></div>
+        <div class="panel-body"><canvas id="curve"></canvas></div>
+      </div>
+    </aside>
+    <div id="rooms-slot-2"></div><div id="rooms-slot-3"></div>
+  </section>
+
+  <section id="scene-playbook" class="scene">
+    <div class="pb-controls">
+      <h2>Playbook</h2>
+      <span class="lbl">left: <b id="pb-left-label">round 1</b></span>
+      <input type="range" id="pb-slider" min="1" max="1" value="1" step="1">
+      <span class="lbl">right: <b id="pb-right-label">round 1</b></span>
+    </div>
+    <div class="pb-grid" id="pb-grid">
+      <div class="panel"><div class="panel-body md" id="pb-left"><div class="placeholder">No playbook saved yet.</div></div></div>
+      <div class="panel"><div class="panel-body md" id="pb-right"></div></div>
+    </div>
+  </section>
+
+  <section id="scene-ridgeline" class="scene">
+    <div class="rl-banner">
+      <div><h2>Ridgeline Furnishings · a supplier nobody has met</h2><p>Blank specialist: default card, no briefing. Informed specialist: card and briefing drafted by the coach from the general tactics alone. Same three deals.</p></div>
+      <div class="verdict"><div class="delta" id="rl-delta">—</div><div class="sub" id="rl-sub">waiting for both arms</div></div>
+      <div></div>
+    </div>
+    <div class="rl-grid">
+      <div id="arm-blank"></div>
+      <div id="arm-informed"></div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+
+  const NAMES = { northwood: 'Northwood Timber', quickfurn: 'QuickFurn', harlow: 'Harlow & Sons', valuecraft: 'ValueCraft', ridgeline: 'Ridgeline Furnishings' };
+  const COLORS = { northwood: '#3987e5', quickfurn: '#d95926', harlow: '#199e70', valuecraft: '#c98500', ridgeline: '#9085e9' };
+  const KNOBS = ['tactic', 'anchor', 'speed', 'tone', 'gives_up'];
+  const DEFAULT_CARD = { tactic: 'ditf', anchor: 'aggressive', speed: 'fast', tone: 'cooperative', gives_up: 'quality' };
+  const nameOf = k => NAMES[k] || k;
+  const fmtPrice = p => (p === null || p === undefined) ? '—' : Math.round(p).toLocaleString('en-US');
+  const fmtScore = s => (s === null || s === undefined) ? '—' : Number(s).toFixed(1);
+  const sameCard = (a, b) => a && b && KNOBS.every(k => a[k] === b[k]);
+  const dealLabel = facts => facts && facts.deal ? `${facts.deal.quantity} ${facts.deal.product}s` : null;
+
+  // ---------- rooms (one per supplier, several chat threads inside) ----------
+  class Room {
+    constructor(key, mount, title) {
+      this.key = key; this.supplierName = nameOf(key); this.threads = []; this.active = null; this.card = null; this.prevCard = null; this.roundScores = [];
+      this.root = el('div', 'panel room');
+      const head = el('div', 'room-head');
+      const title_ = el('div', 'room-title');
+      const sw = el('span', 'swatch'); sw.style.background = COLORS[key] || '#888';
+      this.h2 = el('h2', null, title || nameOf(key));
+      this.scoresEl = el('div', 'scores');
+      title_.append(sw, this.h2, this.scoresEl);
+      this.cardEl = el('div', 'card');
+      this.tabsEl = el('div', 'tabs');
+      head.append(title_, this.cardEl, this.tabsEl);
+      this.body = el('div', 'panel-body');
+      this.body.append(el('div', 'placeholder', 'Waiting for the first deal…'));
+      this.root.append(head, this.body);
+      mount.replaceChildren(this.root);
+    }
+    setCard(card) {
+      if (!card) return;
+      this.prevCard = this.card && !sameCard(this.card, card) ? this.card : this.prevCard;
+      this.card = card;
+      this.cardEl.replaceChildren(el('span', 'lbl', 'card'));
+      for (const k of KNOBS) {
+        const chip = el('span', 'k', k === 'gives_up' ? `gives up ${card[k]}` : card[k]);
+        if (this.prevCard && this.prevCard[k] !== card[k]) chip.classList.add('changed');
+        this.cardEl.append(chip);
+      }
+    }
+    setRoundScores(scores) {
+      this.roundScores = scores;
+      this.scoresEl.replaceChildren();
+      scores.forEach((s, i) => {
+        if (i) this.scoresEl.append(document.createTextNode(' → '));
+        const b = el(i === scores.length - 1 ? 'b' : 'span', null, fmtScore(s));
+        this.scoresEl.append(b);
+      });
+    }
+    start(ev) {
+      if (!this.threads.length) this.body.replaceChildren();
+      const t = { id: this.threads.length + 1, deal: ev.deal, target: ev.target, card: ev.card, turns: [], open: true, outcome: null, score: null, obs: null, round: ev.round || currentRound };
+      t.el = el('div', 'thread');
+      const dealLine = el('div', 'who');
+      dealLine.innerHTML = `<b></b> · target <span class="mono"></span> per piece`;
+      dealLine.querySelector('b').textContent = `Deal: ${ev.deal}`;
+      dealLine.querySelector('span').textContent = fmtPrice(ev.target);
+      t.el.append(dealLine);
+      t.typing = el('div', 'typing');
+      t.el.append(t.typing);
+      this.threads.push(t);
+      this.body.append(t.el);
+      this.setCard(ev.card);
+      this.setTyping(t, 'neg');
+      this.show(t);
+      return t;
+    }
+    threadFor(ev, test) { return this.threads.find(t => t.open && test(t)) || null; }
+    orphan(ev) {
+      // A turn with no open thread (e.g. the page joined mid-run): open an implicit one.
+      return this.start({ deal: ev.deal || 'deal in progress', target: ev.target, card: this.card, round: ev.round });
+    }
+    negotiatorTurn(ev) {
+      const t = this.threadFor(ev, t => !t.turns.some(x => x.by === 'neg' && x.round === ev.round)) || this.orphan(ev);
+      const turn = { by: 'neg', round: ev.round, action: ev.action, offer: ev.offer, el: null };
+      t.turns.push(turn);
+      const m = el('div', 'msg neg');
+      const who = el('div', 'who'); who.append(el('b', null, 'Negotiator'), el('span', null, `round ${ev.round}`));
+      if (ev.served_by && /super/i.test(ev.served_by)) who.append(el('span', 'tag escalated', '⚡ Super'));
+      turn.toneSlot = el('span'); who.append(turn.toneSlot);
+      m.append(who);
+      m.append(el('div', 'bubble', ev.message || (ev.action === 'accept' ? 'We accept your offer.' : '')));
+      m.append(this.chips(ev.offer, ev.action === 'accept' ? 'accepts' : null));
+      t.el.insertBefore(m, t.typing);
+      turn.el = m;
+      this.setTyping(t, ev.action === 'accept' ? null : 'sup');
+      this.show(t);
+    }
+    tone(ev) {
+      const t = this.threadFor(ev, t => t.turns.some(x => x.by === 'neg' && x.round === ev.round && !x.toneLabel));
+      if (!t) return;
+      const turn = t.turns.find(x => x.by === 'neg' && x.round === ev.round && !x.toneLabel);
+      turn.toneLabel = ev.label;
+      turn.toneSlot.replaceWith(el('span', `tag tone-${ev.label}`, `sounds ${ev.label}`));
+    }
+    supplierTurn(ev) {
+      const t = this.threadFor(ev, t => t.turns.some(x => x.by === 'neg' && x.round === ev.round) && !t.turns.some(x => x.by === 'sup' && x.round === ev.round)) || this.orphan(ev);
+      t.turns.push({ by: 'sup', round: ev.round, action: ev.action, offer: ev.offer });
+      const m = el('div', `msg sup${ev.action === 'walk_away' ? ' walk' : ''}`);
+      const who = el('div', 'who'); who.append(el('b', null, this.supplierName), el('span', null, ev.action === 'counter' ? 'counters' : ev.action === 'accept' ? 'accepts' : ev.action === 'walk_away' ? 'walks away' : ev.action));
+      m.append(who, el('div', 'bubble', ev.message || ''));
+      if (ev.offer) m.append(this.chips(ev.offer, ev.action === 'accept' ? 'accepts' : null));
+      t.el.insertBefore(m, t.typing);
+      this.setTyping(t, ev.action === 'counter' ? 'neg' : null);
+      if (ev.action === 'walk_away') this.flash();
+      this.show(t);
+    }
+    end(ev) {
+      let t = null;
+      const open = this.threads.filter(x => x.open);
+      if (ev.outcome === 'walk_away') t = open.find(x => x.turns.length && x.turns[x.turns.length - 1].action === 'walk_away');
+      if (!t && ev.final) t = open.find(x => { const last = x.turns[x.turns.length - 1]; return last && last.offer && last.offer.price === ev.final.price && last.offer.delivery_days === ev.final.delivery_days; });
+      if (!t && open.length === 1) t = open[0];
+      if (!t) t = open.sort((a, b) => b.turns.length - a.turns.length)[0];
+      if (!t) return;
+      t.open = false; t.outcome = ev.outcome; t.score = ev.score;
+      this.setTyping(t, null);
+      const cls = ev.outcome === 'deal' ? 'deal' : ev.outcome === 'walk_away' ? 'walk' : 'nodeal';
+      const badge = el('div', `outcome ${cls}`);
+      badge.append(el('span', null, ev.outcome === 'deal' ? 'DEAL' : ev.outcome === 'walk_away' ? 'WALKED AWAY' : 'NO DEAL'));
+      if (ev.final) badge.append(el('span', 'mono', `${fmtPrice(ev.final.price)} · ${ev.final.quality} · ${ev.final.delivery_days} d`));
+      badge.append(el('span', 'score mono', fmtScore(ev.score)));
+      t.el.insertBefore(badge, t.typing);
+      if (ev.outcome === 'walk_away') this.flash();
+      this.show(t);
+      return t;
+    }
+    report(ev) {
+      const label = dealLabel(ev.facts);
+      const t = [...this.threads].reverse().find(x => !x.open && !x.obs && (!label || x.deal === label)) || null;
+      if (!t || !ev.observations) return;
+      t.obs = ev.observations;
+      const n = el('div', 'note'); n.append(el('b', null, 'negotiator’s report'), document.createTextNode(ev.observations));
+      t.el.insertBefore(n, t.typing);
+      this.show(t, false);
+    }
+    chips(offer, extra) {
+      const c = el('div', 'chips');
+      if (!offer) return c;
+      c.append(el('span', 'chip price mono', fmtPrice(offer.price)), el('span', 'chip', offer.quality || '—'), el('span', 'chip mono', `${offer.delivery_days} days`));
+      if (extra) c.append(el('span', 'chip accept', extra));
+      return c;
+    }
+    setTyping(t, who) {
+      t.typing.className = 'typing' + (who === 'sup' ? ' sup' : '');
+      t.typing.replaceChildren();
+      if (!who) return;
+      const dots = el('span', 'dots'); dots.append(el('span'), el('span'), el('span'));
+      t.typing.append(dots, el('span', null, who === 'neg' ? 'negotiator is writing…' : `${this.supplierName} is replying…`));
+    }
+    show(t, scroll = true) {
+      this.active = t;
+      this.threads.forEach(x => x.el.classList.toggle('active', x === t));
+      this.renderTabs();
+      if (scroll) requestAnimationFrame(() => { this.body.scrollTop = this.body.scrollHeight; });
+    }
+    renderTabs() {
+      this.tabsEl.replaceChildren();
+      const recent = this.threads.slice(-4);
+      for (const t of recent) {
+        const b = el('button', 'tab' + (t === this.active ? ' active' : ''));
+        const st = el('span', 'st ' + (t.open ? 'live' : t.outcome === 'deal' ? 'deal' : t.outcome === 'walk_away' ? 'walk' : 'nodeal'));
+        b.append(st, el('span', null, (t.round ? `R${t.round} · ` : '') + t.deal), el('span', 'mono', t.open ? '' : fmtScore(t.score)));
+        b.onclick = () => this.show(t);
+        this.tabsEl.append(b);
+      }
+    }
+    flash() { this.root.classList.remove('flash'); void this.root.offsetWidth; this.root.classList.add('flash'); }
+    stats() {
+      const closed = this.threads.filter(t => !t.open);
+      return { n: closed.length, mean: closed.length ? closed.reduce((a, t) => a + (t.score || 0), 0) / closed.length : null };
+    }
+  }
+
+  // ---------- state ----------
+  const rooms = {};           // supplier key -> Room (training suppliers)
+  const arms = {};            // 'blank' | 'informed' -> Room for Ridgeline
+  const slots = [0, 1, 2, 3].map(i => $('#rooms-slot-' + i));
+  const order = ['northwood', 'quickfurn', 'harlow', 'valuecraft'];
+  const coachBody = $('#coach-body');
+  const prevBest = {};        // supplier -> {card, score} before this round's coach decision
+  const curve = { rounds: 0, data: {} };
+  let totalRounds = null, currentRound = null, runId = null, paused = false, userPinned = false, ridgelineCount = 0, lastDraft = null;
+  const buffer = [];
+
+  order.forEach((k, i) => { rooms[k] = new Room(k, slots[i]); rooms[k].setCard(DEFAULT_CARD); });
+  setTimeout(() => { arm('blank'); arm('informed'); }, 0);  // after arm() is defined below
+
+  function roomFor(key, idx) {
+    if (rooms[key]) return rooms[key];
+    const slot = slots[idx !== undefined ? idx : Object.keys(rooms).length % 4];
+    rooms[key] = new Room(key, slot);
+    return rooms[key];
+  }
+
+  // ---------- chart ----------
+  const ctx = $('#curve').getContext('2d');
+  const endLabels = {
+    id: 'endLabels',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      ctx.save(); ctx.font = '600 13px -apple-system, Segoe UI, Roboto, sans-serif'; ctx.fillStyle = '#c3c2b7'; ctx.textBaseline = 'middle';
+      const labels = [];
+      chart.data.datasets.forEach((ds, i) => {
+        const meta = chart.getDatasetMeta(i);
+        const pts = meta.data.filter((p, j) => ds.data[j] !== null && ds.data[j] !== undefined);
+        if (pts.length) labels.push({ text: ds.label.split(' ')[0], x: pts[pts.length - 1].x + 8, y: pts[pts.length - 1].y });
+      });
+      labels.sort((a, b) => a.y - b.y);   // push overlapping end labels apart (min 15px)
+      for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 15) labels[i].y = labels[i - 1].y + 15;
+      labels.forEach(l => ctx.fillText(l.text, l.x, l.y));
+      ctx.restore();
+    }
+  };
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: [], datasets: [] },
+    plugins: [endLabels],
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+      layout: { padding: { right: 78, top: 6 } },
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { title: { display: true, text: 'training round', color: '#8d8d86', font: { size: 13 } }, grid: { display: false }, ticks: { color: '#c3c2b7', font: { size: 14 } }, border: { color: '#323236' } },
+        y: { min: 0, max: 100, ticks: { stepSize: 25, color: '#c3c2b7', font: { size: 14 } }, grid: { color: '#26262a' }, border: { display: false } }
+      },
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#c3c2b7', boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: 'circle', font: { size: 13 }, padding: 14 } },
+        tooltip: { backgroundColor: '#2b2b2e', borderColor: '#323236', borderWidth: 1, titleColor: '#f0efec', bodyColor: '#c3c2b7', callbacks: { title: items => `Round ${items[0].label}`, label: item => ` ${item.dataset.label}: ${fmtScore(item.parsed.y)}` } }
+      }
+    }
+  });
+  function ensureSeries(key) {
+    if (curve.data[key]) return curve.data[key];
+    const ds = { label: nameOf(key), data: [], borderColor: COLORS[key] || '#888', backgroundColor: COLORS[key] || '#888', borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, pointBorderColor: '#1a1a19', pointBorderWidth: 2, tension: 0.15, spanGaps: true };
+    curve.data[key] = ds;
+    chart.data.datasets = order.filter(k => curve.data[k]).concat(Object.keys(curve.data).filter(k => !order.includes(k))).map(k => curve.data[k]);
+    return ds;
+  }
+  function setRounds(n) {
+    curve.rounds = Math.max(curve.rounds, n || 0);
+    chart.data.labels = Array.from({ length: curve.rounds }, (_, i) => String(i + 1));
+    for (const ds of Object.values(curve.data)) while (ds.data.length < curve.rounds) ds.data.push(null);
+  }
+  function plot(key, round, score) {
+    setRounds(round);
+    const ds = ensureSeries(key);
+    while (ds.data.length < curve.rounds) ds.data.push(null);
+    ds.data[round - 1] = score;
+    chart.update();
+    const room = rooms[key];
+    if (room) room.setRoundScores(ds.data.filter(v => v !== null && v !== undefined));
+  }
+
+  // ---------- coach panel ----------
+  function describeDiff(a, b) {
+    if (!a || !b) return null;
+    const diffs = KNOBS.filter(k => a[k] !== b[k]).map(k => `${k} ${a[k]} → ${b[k]}`);
+    return diffs.length ? diffs.join(', ') : 'same card';
+  }
+  function coachUpdate(ev) {
+    const prev = prevBest[ev.supplier] || null;
+    const d = el('div', `decision ${ev.result}`);
+    const head = el('div', 'dhead');
+    head.append(el('span', 'sup', nameOf(ev.supplier)), el('span', 'rnd', `round ${ev.round}`), el('span', `pill ${ev.result}`, ev.result.toUpperCase()));
+    d.append(head);
+    const tried = el('div', 'dline');
+    if (ev.result === 'baseline') {
+      tried.innerHTML = `baseline card scored <b class="mono"></b>`;
+      tried.querySelector('b').textContent = fmtScore(ev.score);
+    } else {
+      const change = describeDiff(prev && prev.card, ev.candidate) || 'one-knob change';
+      tried.append(document.createTextNode('tried '), el('b', null, change));
+      const line = el('div', 'dline mono');
+      const before = prev ? prev.score : null;
+      const after = ev.score;
+      const dir = before === null ? '' : after > before + 2 ? 'up' : 'down';
+      line.append(el('span', null, fmtScore(before)), el('span', 'arrow', '→'), el('span', dir, fmtScore(after)));
+      line.append(el('span', null, ev.result === 'kept' ? '  new best' : `  best stays ${fmtScore(ev.best_score)}`));
+      d.append(tried, line);
+    }
+    if (ev.result === 'baseline') d.append(tried);
+    if (ev.change) {
+      const nx = el('div', 'dline'); nx.append(document.createTextNode('next experiment: '), el('b', null, ev.change));
+      if (ev.next_source && ev.next_source !== 'coach') nx.append(el('span', null, ` (${String(ev.next_source).replace(/_/g, ' ')})`));
+      d.append(nx);
+    }
+    if (ev.why) d.append(el('div', 'dwhy', ev.why));
+    pushDecision(d);
+    prevBest[ev.supplier] = { card: ev.best, score: ev.best_score };
+    plot(ev.supplier, ev.round, ev.score);
+    if (rooms[ev.supplier] && ev.next_card) rooms[ev.supplier].nextCard = ev.next_card;
+  }
+  function generalTactics(ev) {
+    const d = el('div', 'decision tactics');
+    const head = el('div', 'dhead'); head.append(el('span', 'sup', 'General tactics rewritten'), el('span', 'rnd', `round ${ev.round}`));
+    d.append(head);
+    const ul = el('ul'); (ev.tactics || []).forEach(t => ul.append(el('li', null, t))); d.append(ul);
+    pushDecision(d);
+  }
+  function pushDecision(d) {
+    const ph = coachBody.querySelector('.placeholder'); if (ph) ph.remove();
+    coachBody.prepend(d);
+    coachBody.scrollTop = 0;
+  }
+
+  // ---------- playbook ----------
+  const pb = { rounds: [], cache: {} };
+  const slider = $('#pb-slider');
+  async function refreshPlaybooks(selectLast) {
+    if (!runId) return;
+    try {
+      const r = await fetch(`/api/run/${runId}/playbooks`); if (!r.ok) return;
+      const { rounds } = await r.json();
+      const grew = rounds.length > pb.rounds.length;
+      pb.rounds = rounds;
+      if (!rounds.length) return;
+      slider.min = rounds[0]; slider.max = rounds[rounds.length - 1];
+      if (selectLast || grew) slider.value = rounds[rounds.length - 1];
+      if (grew) ping('playbook');
+      renderPlaybook();
+    } catch (e) { /* server not ready */ }
+  }
+  async function md(round) {
+    if (pb.cache[round]) return pb.cache[round];
+    const r = await fetch(`/api/run/${runId}/playbook/${round}`);
+    const text = r.ok ? await r.text() : `_No playbook for round ${round} yet._`;
+    if (r.ok) pb.cache[round] = text;
+    return text;
+  }
+  async function renderPlaybook() {
+    if (!pb.rounds.length) return;
+    const left = pb.rounds[0], right = Number(slider.value);
+    $('#pb-left-label').textContent = `round ${left}`; $('#pb-right-label').textContent = `round ${right}`;
+    const grid = $('#pb-grid');
+    grid.classList.toggle('single', left === right);
+    $('#pb-left').innerHTML = marked.parse(await md(left));
+    $('#pb-right').innerHTML = left === right ? '' : marked.parse(await md(right));
+  }
+  slider.addEventListener('input', renderPlaybook);
+
+  // ---------- Ridgeline ----------
+  function arm(name) {
+    if (arms[name]) return arms[name];
+    const room = new Room('ridgeline', $('#arm-' + name), name === 'blank' ? 'Blank specialist' : 'Informed specialist');
+    // Swap the room head for an arm head with mean + briefing.
+    const head = room.root.querySelector('.room-head');
+    room.meanEl = el('div', 'mean'); room.meanEl.innerHTML = '<span class="mono">—</span><small>mean of 0 deals</small>';
+    head.querySelector('.room-title').append(room.meanEl);
+    room.briefEl = el('div', 'briefing'); room.briefEl.append(el('b', null, 'briefing'), document.createTextNode(name === 'blank' ? 'none. Default card, no knowledge.' : 'waiting for the coach’s draft…'));
+    head.insertBefore(room.briefEl, head.querySelector('.tabs'));
+    if (name === 'blank') room.setCard(DEFAULT_CARD);
+    arms[name] = room;
+    return room;
+  }
+  function armFor(ev) {
+    if (ev.arm) return String(ev.arm).toLowerCase().includes('inform') ? 'informed' : 'blank';
+    if (ev.kind === 'negotiation_start') {
+      const informedCard = lastDraft && lastDraft.card;
+      if (informedCard && !sameCard(informedCard, DEFAULT_CARD)) return sameCard(ev.card, DEFAULT_CARD) ? 'blank' : 'informed';
+      return ridgelineCount < 3 ? 'blank' : 'informed';   // identical cards: the first three deals are the blank arm (§10)
+    }
+    if (ev.kind === 'report') {
+      const label = dealLabel(ev.facts);
+      for (const name of ['blank', 'informed']) {
+        const r = arms[name];
+        if (r && r.threads.some(t => !t.open && !t.obs && (!label || t.deal === label))) return name;
+      }
+      return 'informed';
+    }
+    // Later turns: whichever arm has an open thread that is waiting for this kind of turn.
+    for (const name of ['blank', 'informed']) {
+      const r = arms[name]; if (!r) continue;
+      const fits = ev.kind === 'negotiator_turn' ? t => !t.turns.some(x => x.by === 'neg' && x.round === ev.round)
+        : ev.kind === 'supplier_turn' || ev.kind === 'tone' ? t => t.turns.some(x => x.by === 'neg' && x.round === ev.round) && !t.turns.some(x => x.by === 'sup' && x.round === ev.round)
+        : () => true;
+      if (r.threads.some(t => t.open && fits(t))) return name;
+    }
+    return arms.informed ? 'informed' : 'blank';
+  }
+  function updateVerdict(ev) {
+    const b = arms.blank && arms.blank.stats(), i = arms.informed && arms.informed.stats();
+    for (const [name, s] of [['blank', b], ['informed', i]]) {
+      if (!s) continue;
+      arms[name].meanEl.innerHTML = '';
+      arms[name].meanEl.append(el('span', 'mono', fmtScore(s.mean)), el('small', null, `mean of ${s.n} deal${s.n === 1 ? '' : 's'}`));
+    }
+    let bm = b && b.mean, im = i && i.mean, sub = 'waiting for both arms';
+    if (ev && ev.kind === 'ridgeline_result') {
+      const num = k => { const v = Object.entries(ev).find(([kk, vv]) => kk.toLowerCase().includes(k) && typeof vv === 'number'); return v ? v[1] : null; };
+      bm = num('blank') ?? bm; im = num('inform') ?? im;
+    }
+    if (bm !== null && bm !== undefined && im !== null && im !== undefined && b.n && i.n) {
+      const diff = im - bm;
+      const d = $('#rl-delta'); d.textContent = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}`; d.className = 'delta ' + (diff > 0 ? 'win' : diff < 0 ? 'lose' : '');
+      sub = diff > 0 ? `informed ${fmtScore(im)} beats blank ${fmtScore(bm)}` : diff < 0 ? `blank ${fmtScore(bm)} beats informed ${fmtScore(im)}` : 'tie';
+    }
+    $('#rl-sub').textContent = sub;
+  }
+  function ridgelineDraft(ev) {
+    lastDraft = ev;
+    const r = arm('informed');
+    r.setCard(ev.card);
+    r.briefEl.replaceChildren(el('b', null, 'briefing'), document.createTextNode(ev.briefing || '(empty)'));
+    if (ev.why) { const w = el('div', 'briefing'); w.append(el('b', null, 'coach'), document.createTextNode(ev.why)); r.briefEl.after(w); }
+    arm('blank');
+    ping('ridgeline'); autoScene('ridgeline');
+  }
+
+  // ---------- scenes ----------
+  function scene(name, manual) {
+    document.querySelectorAll('.scene').forEach(s => s.classList.toggle('active', s.id === 'scene-' + name));
+    document.querySelectorAll('nav button').forEach(b => { b.classList.toggle('active', b.dataset.scene === name); if (b.dataset.scene === name) b.classList.remove('ping'); });
+    if (manual) userPinned = true;
+    if (name === 'playbook') refreshPlaybooks(false);
+    if (name === 'rooms') chart.resize();
+  }
+  function autoScene(name) { if (!userPinned) scene(name, false); }
+  function ping(name) { const b = document.querySelector(`nav button[data-scene="${name}"]`); if (b && !b.classList.contains('active')) b.classList.add('ping'); }
+  document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => scene(b.dataset.scene, true)));
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === '1') scene('rooms', true); if (e.key === '2') scene('playbook', true); if (e.key === '3') scene('ridgeline', true);
+    if (e.key === ' ') { e.preventDefault(); togglePause(); }
+  });
+  function togglePause() {
+    paused = !paused; $('#pause').textContent = paused ? `Resume (${buffer.length})` : 'Pause';
+    if (!paused) { while (buffer.length) handle(buffer.shift()); }
+  }
+  $('#pause').addEventListener('click', togglePause);
+  function toast(text) { const t = $('#toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2500); }
+
+  // ---------- event handling ----------
+  const ticker = $('#ticker'), tickerText = $('#ticker-text');
+  function setTicker(text, cls) { ticker.className = 'ticker ' + (cls || ''); tickerText.textContent = text; }
+  function shortModel(m) { if (!m) return '?'; if (/Super/i.test(m)) return 'Super'; if (/Nano/i.test(m)) return 'Nano'; if (/Lightning/i.test(m)) return 'Lightning'; if (/Qwen/i.test(m)) return 'Qwen'; return m.split('/').pop(); }
+  function roundLabel() {
+    const r = currentRound ? `Round <b>${currentRound}</b>${totalRounds ? ` / ${totalRounds}` : ''}` : (runId ? `run ${runId}` : 'waiting for a run…');
+    $('#round-label').innerHTML = r;
+  }
+
+  function handle(ev) {
+    const isRidge = ev.supplier === 'ridgeline';
+    switch (ev.kind) {
+      case 'run_start':
+        runId = ev.run_id || runId; totalRounds = ev.rounds || totalRounds; setRounds(totalRounds); chart.update(); roundLabel(); break;
+      case 'round_start':
+        currentRound = ev.round; roundLabel();
+        Object.entries(ev.cards || {}).forEach(([k, card], i) => roomFor(k, i).setCard(card));
+        autoScene('rooms'); break;
+      case 'negotiation_start':
+        if (isRidge) { const a = armFor(ev); ridgelineCount++; const r = arm(a); r.start(ev); if (a === 'blank') r.setCard(ev.card); ping('ridgeline'); autoScene('ridgeline'); }
+        else roomFor(ev.supplier).start(ev);
+        break;
+      case 'negotiator_turn': (isRidge ? arm(armFor(ev)) : roomFor(ev.supplier)).negotiatorTurn(ev); break;
+      case 'tone': (isRidge ? arm(armFor(ev)) : roomFor(ev.supplier)).tone(ev); break;
+      case 'supplier_turn': (isRidge ? arm(armFor(ev)) : roomFor(ev.supplier)).supplierTurn(ev); break;
+      case 'negotiation_end':
+        if (isRidge) { arm(armFor(ev)).end(ev); updateVerdict(); }
+        else roomFor(ev.supplier).end(ev);
+        break;
+      case 'report': (isRidge ? arm(armFor(ev)) : roomFor(ev.supplier)).report(ev); break;
+      case 'coach_update': coachUpdate(ev); break;
+      case 'general_tactics': generalTactics(ev); break;
+      case 'round_end': setTimeout(() => refreshPlaybooks(true), 1500); break;
+      case 'ridgeline_draft': ridgelineDraft(ev); break;
+      case 'ridgeline_result': case 'ridgeline_end': arm('blank'); arm('informed'); updateVerdict(ev); ping('ridgeline'); autoScene('ridgeline'); break;
+      case 'llm_call': setTicker(`${shortModel(ev.model)} · ${ev.role} · ${Number(ev.latency_s).toFixed(1)} s`, ''); break;
+      case 'llm_retry': setTicker(`retrying ${shortModel(ev.model)} (${ev.error})`, 'retry'); break;
+      case 'router_fallback': setTicker('Switchyard down, falling back to Nano', 'retry'); break;
+      case 'run_end': setTicker('run complete', 'idle'); refreshPlaybooks(true); break;
+      case 'replay_end': setTicker('replay finished', 'idle'); break;
+      default: break;
+    }
+  }
+
+  // ---------- connect ----------
+  async function connect() {
+    const url = new URL(location.href);
+    let cfg = {};
+    try { cfg = await (await fetch('/api/config')).json(); } catch (e) { setTicker('server unreachable', 'retry'); return; }
+    runId = url.searchParams.get('run') || cfg.run_id;
+    const speed = url.searchParams.has('speed') ? Number(url.searchParams.get('speed')) : cfg.speed;
+    const modeEl = $('#mode');
+    modeEl.textContent = speed > 0 ? `REPLAY ×${speed}` : 'LIVE'; modeEl.classList.toggle('live', !(speed > 0));
+    roundLabel(); refreshPlaybooks(true);
+    if (url.searchParams.get('scene')) scene(url.searchParams.get('scene'), true);
+    const es = new EventSource(`/events?run=${encodeURIComponent(runId || '')}&speed=${speed}`);
+    es.onopen = () => setTicker(speed > 0 ? 'replaying recorded run' : 'listening for events', '');
+    es.onerror = () => setTicker('stream closed, reconnecting…', 'retry');
+    es.onmessage = e => {
+      let ev; try { ev = JSON.parse(e.data); } catch (err) { return; }
+      if (ev.kind === 'replay_end') es.close();
+      if (paused) { buffer.push(ev); $('#pause').textContent = `Resume (${buffer.length})`; return; }
+      handle(ev);
+    };
+  }
+  connect();
+})();
+</script>
+</body>
+</html>
