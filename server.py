@@ -27,7 +27,7 @@ WEB = ROOT / "web"
 RUNS = ROOT / "runs"
 RUN_ID_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
-SETTINGS: dict[str, object] = {"run_id": None, "replay": False, "speed": None, "max_gap": 5.0, "gate": True}  # speed None = default schedule
+SETTINGS: dict[str, object] = {"run_id": None, "replay": False, "speed": None, "max_gap": 5.0, "gate": True, "scale": 1.0}  # speed None = default schedule, times scale
 _next_signals: set[asyncio.Event] = set()  # replay streams waiting for the presenter's "Next"
 STOP = asyncio.Event()  # set on Ctrl+C so open event streams end at once instead of holding the server
 
@@ -238,7 +238,7 @@ async def gate(request: Request, info: dict):
         _next_signals.discard(signal)
 
 
-async def replay_stream(path: Path, speed: float | None, max_gap: float, gated: bool, start_after: int, request: Request):
+async def replay_stream(path: Path, speed: float | None, max_gap: float, gated: bool, start_after: int, request: Request, scale: float = 1.0):
     """Replay mode. Each event is paced by its recorded `t` gap divided by its segment's speed
     (capped at max_gap seconds); speed 0 sends the segment instantly. speed=None uses the default
     schedule (rounds 1-2 and Ridgeline real time, rounds 3+ instant); a number is a uniform speed.
@@ -246,7 +246,8 @@ async def replay_stream(path: Path, speed: float | None, max_gap: float, gated: 
     updates (`round_end`); an instant round is applied in full on its press."""
     events = load_events(path)
     segs = segments(events)
-    speed_of = default_speed if speed is None else (lambda _segment: speed)
+    # The schedule times `scale`: real-time segments play at scale x, instant ones stay instant.
+    speed_of = (lambda segment: default_speed(segment) * scale) if speed is None else (lambda _segment: speed)
     last_t: float | None = None
     if gated and start_after == 0:
         async for chunk in gate(request, up_next(events, 0, speed_of)):
@@ -288,20 +289,20 @@ async def events(request: Request, run: str | None = None, speed: float | None =
     last_id = request.headers.get("last-event-id")
     start_after = int(last_id) if last_id and last_id.isdigit() else 0
     headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"}
-    stream = replay_stream(path, pace, float(SETTINGS["max_gap"]), gated, start_after, request) if replay else live_stream(path, start_after, request)
+    stream = replay_stream(path, pace, float(SETTINGS["max_gap"]), gated, start_after, request, float(SETTINGS["scale"])) if replay else live_stream(path, start_after, request)
     return StreamingResponse(stream, media_type="text/event-stream", headers=headers)
 
 
-def serve(run_id: str | None, speed: float | None = 0.0, port: int = 8000, host: str = "127.0.0.1", open_browser: bool = True, max_gap: float = 5.0, gate: bool = True, replay: bool | None = None) -> None:
+def serve(run_id: str | None, speed: float | None = 0.0, port: int = 8000, host: str = "127.0.0.1", open_browser: bool = True, max_gap: float = 5.0, gate: bool = True, replay: bool | None = None, scale: float = 1.0) -> None:
     """speed 0 (and replay unset) = live follow; speed N > 0 = uniform replay; replay=True with
     speed None = the default schedule (rounds 1-2 and Ridgeline real time, rounds 3+ instant)."""
     run_id = run_id or newest_run_id()
     if run_id:
         run_dir(run_id)
     replay = bool(speed) if replay is None else replay
-    SETTINGS.update(run_id=run_id, replay=replay, speed=speed or None, max_gap=max_gap, gate=gate and replay)
+    SETTINGS.update(run_id=run_id, replay=replay, speed=speed or None, max_gap=max_gap, gate=gate and replay, scale=scale)
     url = f"http://{host}:{port}/"
-    pacing = "rounds 1-2 and Ridgeline real time, rounds 3+ fast-forward" if not speed else f"x{speed:g}"
+    pacing = f"rounds 1-2 and Ridgeline at x{scale:g}, rounds 3+ instant" if not speed else f"x{speed:g}"
     mode = f"replay {pacing}" + (", presenter gated: press Next" if gate else "") if replay else "live (following the file)"
     print(f"DealMind UI: {url}  run={run_id or '(none yet)'}  mode={mode}")
     if open_browser:

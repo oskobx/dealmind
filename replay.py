@@ -1,7 +1,7 @@
 """Replay a recorded run in the web UI (SPEC §11 safety net).
 
     uv run replay.py <run_id>              # default schedule
-    uv run replay.py <run_id> --speed 3    # uniform speed instead
+    uv run replay.py <run_id> --speed 3    # same schedule, real-time segments 3x faster
 
 Default schedule: rounds 1 and 2 play at recorded speed, rounds 3 and later are each applied
 instantly on their own press (chat, coach decisions, chart and room headers land exactly as
@@ -23,14 +23,13 @@ from server import serve
 def main() -> None:
     parser = argparse.ArgumentParser(description="Replay a recorded DealMind run in the web UI.")
     parser.add_argument("run_id", help="folder name under runs/, e.g. demo")
-    parser.add_argument("--speed", type=float, default=None, help="uniform playback speed instead of the default schedule")
+    parser.add_argument("--speed", type=float, default=1.0, help="multiplies the schedule: rounds 1-2 and Ridgeline at N x recorded speed; rounds 3+ stay instant")
     parser.add_argument("--max-gap", type=float, default=5.0, help="longest pause between events, seconds")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--no-open", action="store_true", help="do not open the browser")
     parser.add_argument("--autoplay", action="store_true", help="play straight through instead of waiting for Next")
     args = parser.parse_args()
-    speed = None if args.speed is None else max(0.1, args.speed)
-    serve(args.run_id, speed=speed, port=args.port, open_browser=not args.no_open, max_gap=args.max_gap, gate=not args.autoplay, replay=True)
+    serve(args.run_id, speed=None, port=args.port, open_browser=not args.no_open, max_gap=args.max_gap, gate=not args.autoplay, replay=True, scale=max(0.1, args.speed))
 
 
 if __name__ == "__main__":
