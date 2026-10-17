@@ -248,7 +248,7 @@
         <div class="panel-body" id="coach-body"><div class="placeholder">The coach speaks after each round: one knob at a time, kept only if it wins.</div></div>
       </div>
       <div class="panel" id="chart-panel">
-        <div class="panel-head"><h2>Learning curve</h2><span class="tag" style="margin-left:auto">mean deal score per round</span></div>
+        <div class="panel-head"><h2>Learning curve</h2><span class="tag" style="margin-left:auto">line: best card so far · ● kept ○ discarded</span></div>
         <div class="panel-body"><canvas id="curve"></canvas></div>
       </div>
     </aside>
@@ -495,6 +495,7 @@
       ctx.save(); ctx.font = '600 13px -apple-system, Segoe UI, Roboto, sans-serif'; ctx.fillStyle = '#2e2e2c'; ctx.textBaseline = 'middle';
       const labels = [];
       chart.data.datasets.forEach((ds, i) => {
+        if (ds.kind !== 'best') return;
         const meta = chart.getDatasetMeta(i);
         const pts = meta.data.filter((p, j) => ds.data[j] !== null && ds.data[j] !== undefined);
         if (pts.length) labels.push({ text: ds.label.split(' ')[0], x: pts[pts.length - 1].x + 8, y: pts[pts.length - 1].y });
@@ -518,31 +519,43 @@
         y: { min: 0, max: 100, ticks: { stepSize: 25, color: '#2e2e2c', font: { size: 14 } }, grid: { color: '#dadad6' }, border: { display: false } }
       },
       plugins: {
-        legend: { position: 'bottom', labels: { color: '#2e2e2c', boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: 'circle', font: { size: 13 }, padding: 14 } },
-        tooltip: { backgroundColor: '#ffffff', borderColor: '#b4b4ae', borderWidth: 1, titleColor: '#111111', bodyColor: '#2e2e2c', callbacks: { title: items => `Round ${items[0].label}`, label: item => ` ${item.dataset.label}: ${fmtScore(item.parsed.y)}` } }
+        legend: { position: 'bottom', labels: { color: '#2e2e2c', boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: 'circle', font: { size: 13 }, padding: 14, filter: item => chart.data.datasets[item.datasetIndex].kind === 'best' } },
+        tooltip: { backgroundColor: '#ffffff', borderColor: '#b4b4ae', borderWidth: 1, titleColor: '#111111', bodyColor: '#2e2e2c', callbacks: { title: items => `Round ${items[0].label}`, label: item => {
+          const ds = item.dataset;
+          if (ds.kind === 'best') return ` ${ds.label} best so far: ${fmtScore(item.parsed.y)}`;
+          const kept = ds.pointBackgroundColor[item.dataIndex] !== '#ffffff';
+          return ` ${ds.label} candidate: ${fmtScore(item.parsed.y)} (${kept ? 'kept' : 'discarded'})`;
+        } } }
       }
     }
   });
   function ensureSeries(key) {
     if (curve.data[key]) return curve.data[key];
-    const ds = { label: nameOf(key), data: [], borderColor: COLORS[key] || '#555', backgroundColor: COLORS[key] || '#555', borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 6, pointBorderColor: '#ffffff', pointBorderWidth: 2, tension: 0.15, spanGaps: true };
-    curve.data[key] = ds;
-    chart.data.datasets = order.filter(k => curve.data[k]).concat(Object.keys(curve.data).filter(k => !order.includes(k))).map(k => curve.data[k]);
-    return ds;
+    const color = COLORS[key] || '#555';
+    // Main line: best score so far (never goes down, §8.1: a card is kept only if it wins).
+    const line = { kind: 'best', label: nameOf(key), data: [], borderColor: color, backgroundColor: color, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 0, tension: 0, spanGaps: true };
+    // Dots: each round's tested candidate; filled if kept (or the baseline), hollow if discarded.
+    const dots = { kind: 'candidate', label: nameOf(key), data: [], showLine: false, borderColor: color, pointBorderColor: color, pointBackgroundColor: [], pointRadius: 5, pointHoverRadius: 7, pointBorderWidth: 2 };
+    curve.data[key] = { line, dots, color };
+    const keys = order.filter(k => curve.data[k]).concat(Object.keys(curve.data).filter(k => !order.includes(k)));
+    chart.data.datasets = keys.flatMap(k => [curve.data[k].line, curve.data[k].dots]);
+    return curve.data[key];
   }
   function setRounds(n) {
     curve.rounds = Math.max(curve.rounds, n || 0);
     chart.data.labels = Array.from({ length: curve.rounds }, (_, i) => String(i + 1));
-    for (const ds of Object.values(curve.data)) while (ds.data.length < curve.rounds) ds.data.push(null);
+    for (const s of Object.values(curve.data)) for (const ds of [s.line, s.dots]) while (ds.data.length < curve.rounds) ds.data.push(null);
   }
-  function plot(key, round, score) {
+  function plot(key, round, score, best, result) {
     setRounds(round);
-    const ds = ensureSeries(key);
-    while (ds.data.length < curve.rounds) ds.data.push(null);
-    ds.data[round - 1] = score;
+    const s = ensureSeries(key);
+    setRounds(round);
+    s.line.data[round - 1] = (best === null || best === undefined) ? score : best;
+    s.dots.data[round - 1] = score;
+    s.dots.pointBackgroundColor[round - 1] = result === 'discarded' ? '#ffffff' : s.color;
     chart.update();
     const room = rooms[key];
-    if (room) room.setRoundScores(ds.data.filter(v => v !== null && v !== undefined));
+    if (room) room.setRoundScores(s.dots.data.filter(v => v !== null && v !== undefined));
   }
 
   // ---------- coach panel ----------
@@ -581,7 +594,7 @@
     if (ev.why) d.append(el('div', 'dwhy', ev.why));
     pushDecision(d);
     prevBest[ev.supplier] = { card: ev.best, score: ev.best_score };
-    plot(ev.supplier, ev.round, ev.score);
+    plot(ev.supplier, ev.round, ev.score, ev.best_score, ev.result);
     if (rooms[ev.supplier] && ev.next_card) rooms[ev.supplier].nextCard = ev.next_card;
   }
   function generalTactics(ev) {
