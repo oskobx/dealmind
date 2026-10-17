@@ -75,6 +75,12 @@
   .mode.live { color: var(--good); border-color: var(--good); }
   .btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 10px; font: inherit; font-size: 0.95rem; padding: 6px 12px; cursor: pointer; }
   .btn:hover { background: var(--surface-3); }
+  .btn.next { background: var(--good); border-color: var(--good); color: #fff; font-size: 1.15rem; font-weight: 800; padding: 9px 20px; animation: glow 1.4s ease-in-out infinite; }
+  .btn.next:hover { background: #0a5a0a; }
+  .btn.next[hidden] { display: none; }
+  @keyframes glow { 0%,100% { box-shadow: 0 0 0 0 rgba(10,125,10,0.5); } 50% { box-shadow: 0 0 0 8px rgba(10,125,10,0); } }
+  .ticker.ready #ticker-text { color: var(--good); font-weight: 700; font-size: 1.05rem; }
+  .ticker.ready .pulse { background: var(--good); }
 
   /* ---------- scenes ---------- */
   main { flex: 1; min-height: 0; position: relative; }
@@ -236,6 +242,7 @@
   <div class="spacer"></div>
   <div class="ticker idle" id="ticker"><span class="pulse"></span><span id="ticker-text">connecting…</span></div>
   <span class="mode" id="mode">…</span>
+  <button class="btn next" id="next" title="right arrow" hidden>Next round ▶</button>
   <button class="btn" id="pause" title="space">Pause</button>
 </header>
 
@@ -734,6 +741,25 @@
     if (!paused) { while (buffer.length) handle(buffer.shift()); }
   }
   $('#pause').addEventListener('click', togglePause);
+
+  // Presenter control (replay only): the server holds the stream at each gate until /api/next.
+  let waiting = null;
+  function replayWait(ev) {
+    waiting = ev;
+    const btn = $('#next');
+    btn.textContent = ev.next === 'ridgeline' ? 'Ridgeline test ▶' : 'Next round ▶';
+    btn.hidden = false;
+    setTicker(ev.next === 'ridgeline' ? 'Ridgeline test ready, press Next' : `Round ${ev.round} ready, press Next`, 'ready');
+  }
+  async function next() {
+    if (!waiting) return;
+    const ev = waiting; waiting = null;
+    $('#next').hidden = true;
+    setTicker(ev.next === 'ridgeline' ? 'playing the Ridgeline test…' : `playing round ${ev.round}…`, '');
+    try { await fetch('/api/next', { method: 'POST' }); } catch (e) { setTicker('could not reach the server', 'retry'); waiting = ev; $('#next').hidden = false; }
+  }
+  $('#next').addEventListener('click', next);
+  document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' && e.target.tagName !== 'INPUT') { e.preventDefault(); next(); } });
   function toast(text) { const t = $('#toast'); t.textContent = text; t.classList.add('show'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2500); }
 
   // ---------- event handling ----------
@@ -775,6 +801,7 @@
       case 'llm_retry': setTicker(`retrying ${shortModel(ev.model)} (${ev.error})`, 'retry'); break;
       case 'router_fallback': setTicker('Switchyard down, falling back to Nano', 'retry'); break;
       case 'run_end': setTicker('run complete', 'idle'); refreshPlaybooks(true); break;
+      case 'replay_wait': replayWait(ev); break;
       case 'replay_end': setTicker('replay finished', 'idle'); break;
       default: break;
     }
@@ -791,7 +818,8 @@
     modeEl.textContent = speed > 0 ? `REPLAY ×${speed}` : 'LIVE'; modeEl.classList.toggle('live', !(speed > 0));
     roundLabel(); refreshPlaybooks(true);
     if (url.searchParams.get('scene')) scene(url.searchParams.get('scene'), true);
-    const es = new EventSource(`/events?run=${encodeURIComponent(runId || '')}&speed=${speed}`);
+    const gateParam = url.searchParams.has('gate') ? `&gate=${encodeURIComponent(url.searchParams.get('gate'))}` : '';
+    const es = new EventSource(`/events?run=${encodeURIComponent(runId || '')}&speed=${speed}${gateParam}`);
     es.onopen = () => setTicker(speed > 0 ? 'replaying recorded run' : 'listening for events', '');
     es.onerror = () => setTicker('stream closed, reconnecting…', 'retry');
     es.onmessage = e => {
