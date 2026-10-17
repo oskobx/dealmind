@@ -3,7 +3,15 @@
 import pytest
 
 from dealmind import config
-from dealmind.scoring import deal_score, delivery_score, price_score, quality_score, target_price
+from dealmind.scoring import (
+    Offer,
+    deal_score,
+    delivery_score,
+    price_score,
+    quality_score,
+    score_offer,
+    target_price,
+)
 
 APPROX = dict(abs=0.01)
 
@@ -107,3 +115,17 @@ def test_perfect_deal_scores_100() -> None:
 
 def test_all_targets_score_exactly_70() -> None:
     assert deal_score(1000, config.TARGET_QUALITY, config.TARGET_DELIVERY_DAYS, 1000) == pytest.approx(70.0, **APPROX)
+
+
+def test_score_offer_matches_deal_score_and_handles_no_deal() -> None:
+    assert score_offer(Offer(1000, "standard", 20), 1100) == pytest.approx(74.58, **APPROX)
+    assert score_offer(None, 1100) == 0.0
+
+
+def test_offer_validates_terms() -> None:
+    with pytest.raises(ValueError):
+        Offer(1000, "deluxe", 14)
+    with pytest.raises(ValueError):
+        Offer(1000, "standard", 0)
+    with pytest.raises(ValueError):
+        Offer(0, "standard", 14)

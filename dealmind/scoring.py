@@ -2,7 +2,26 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from dealmind import config
+
+
+@dataclass(frozen=True)
+class Offer:
+    """A structured offer: the three negotiated terms (§2). Shared by negotiator and suppliers."""
+
+    price: float
+    quality: str
+    delivery_days: int
+
+    def __post_init__(self) -> None:
+        if self.quality not in config.QUALITIES:
+            raise ValueError(f"unknown quality {self.quality!r}")
+        if self.delivery_days < 1:
+            raise ValueError(f"delivery_days must be positive, got {self.delivery_days}")
+        if self.price <= 0:
+            raise ValueError(f"price must be positive, got {self.price}")
 
 
 def target_price(product: str, quantity: int) -> float:
@@ -63,3 +82,10 @@ def deal_score(
         + config.WEIGHT_QUALITY * quality_score(quality)
         + config.WEIGHT_DELIVERY * delivery_score(delivery_days)
     )
+
+
+def score_offer(offer: Offer | None, target: float) -> float:
+    """§3.4 for a structured offer. None (no deal) = 0."""
+    if offer is None:
+        return 0.0
+    return deal_score(offer.price, offer.quality, offer.delivery_days, target)
