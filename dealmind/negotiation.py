@@ -44,6 +44,7 @@ class NegotiationResult:
     exchanges: list[Exchange]
     observed: Observed
     escalated_turns: int
+    session: NegotiatorSession | None = None  # the negotiator's prompt + history, for the report (§9.1)
 
     def offers(self) -> list[dict]:
         """§9.1 facts: every structured offer, by whom, with tone label and serving model."""
@@ -198,7 +199,7 @@ def negotiate(
     escalated = sum(1 for ex in exchanges if ex.negotiator.served_by and ex.negotiator.served_by != config.MODEL_NEGOTIATOR)
     events.emit("negotiation_end", supplier=supplier.key, outcome=outcome, final=final.__dict__ if final else None, score=round(score, 1), closed_by=closed_by)
     tell(f"  => {outcome.upper()}" + (f" at {_fmt(final)}" if final else "") + f", score {score:.1f}")
-    return NegotiationResult(supplier.key, deal, card, outcome, final, score, closed_by, exchanges, obs, escalated)
+    return NegotiationResult(supplier.key, deal, card, outcome, final, score, closed_by, exchanges, obs, escalated, session)
 
 
 def _fmt(offer: Offer | None) -> str:

@@ -124,6 +124,16 @@ def test_plan_never_retreats_and_never_exceeds_counter() -> None:
     assert r3.delivery_days >= min(r2.delivery_days, counter2.delivery_days)
 
 
+def test_plan_allows_accept_only_when_counter_beats_plan() -> None:
+    # §5: counters only improve round over round, so accepting early is allowed only when their counter
+    # already scores at least as well as the offer we are about to make.
+    opening = Offer(770, "premium", 7)
+    weak_counter = Offer(1375, "standard", 21)  # scores ~42: above the walk-away line, below our plan
+    assert planned_offer(default_card(), DEAL, 2, opening, ASK, weak_counter, opening).may_accept is False
+    great_counter = Offer(900, "premium", 10)  # better than anything we would ask for
+    assert planned_offer(default_card(), DEAL, 2, opening, ASK, great_counter, opening).may_accept is True
+
+
 def test_plan_price_capped_at_136_percent_of_target() -> None:
     card = mutate_one_knob(default_card(), "gives_up", "price")
     opening = Offer(770, "premium", 7)

@@ -9,3 +9,7 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# Run folders: commit the demo run only
+runs/*
+!runs/demo/

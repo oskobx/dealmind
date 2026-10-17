@@ -247,6 +247,9 @@ def test_majority_tone() -> None:
     assert majority_tone(["cooperative", "firm"]) == "neutral"  # tie
     assert majority_tone(["cooperative", "firm", "cooperative"]) == "cooperative"
     assert majority_tone(["cooperative", "garbage", "garbage"]) == "cooperative"  # unknown labels ignored
+    assert majority_tone(["firm", "neutral"]) == "firm"  # neutral carries no signal
+    assert majority_tone(["neutral", "neutral", "cooperative"]) == "cooperative"
+    assert majority_tone(["neutral", "neutral"]) == "neutral"
 
 
 def test_respond_derives_round_one_observations() -> None:

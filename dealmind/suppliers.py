@@ -63,11 +63,12 @@ def observed_speed(opening_price: float, round2_price: float, supplier_ask: floa
 
 
 def majority_tone(labels: list[str]) -> str:
-    """§6.2: majority tone label so far. No labels or a tie -> neutral (no tone hot button fires)."""
-    counts = Counter(label for label in labels if label in TONES)
-    if not counts:
+    """§6.2: majority tone so far. Neutral labels carry no signal, so they do not vote; a tie between
+    firm and cooperative, or no signal at all, is neutral (no tone hot button fires)."""
+    votes = Counter(label for label in labels if label in ("firm", "cooperative"))
+    if not votes:
         return "neutral"
-    ranked = counts.most_common()
+    ranked = votes.most_common()
     if len(ranked) > 1 and ranked[0][1] == ranked[1][1]:
         return "neutral"
     return ranked[0][0]

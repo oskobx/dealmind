@@ -20,8 +20,15 @@ QUALITY_RANK: dict[str, int] = {"basic": 0, "standard": 1, "premium": 2}
 GENERIC_MESSAGE = "Here is our offer for this round. We would like to find terms that work for both of us."
 
 TONE_INSTRUCTIONS: dict[str, str] = {
-    "firm": "Tone: firm. Short, declarative sentences. State the position plainly. No apologies, no flattery, no hedging.",
-    "cooperative": "Tone: cooperative. Warm and collaborative. Acknowledge their points, talk about a long partnership, stay courteous.",
+    "firm": (
+        "Tone: firm. Short, declarative sentences. State the number and the terms as a position, not a request. "
+        "No thanks, no praise, no 'fair', no 'happy to', no questions. Even when you move, sound immovable, "
+        "for example: '1800 per piece, standard, 11 days. That is where we are.'"
+    ),
+    "cooperative": (
+        "Tone: cooperative. Warm and collaborative: thank them, acknowledge their points, talk about a long "
+        "partnership, and frame every number as a step toward a deal that works for both sides."
+    ),
 }
 
 
@@ -117,7 +124,11 @@ def planned_offer(
         quality = previous.quality
     price = min(price, last_counter.price, config.MAX_PRICE_RATIO * target)  # §4.4 never above 1.36 x target
 
-    return Plan(Offer(price=round(price), quality=quality, delivery_days=days), claim, note, True)
+    offer = Offer(price=round(price), quality=quality, delivery_days=days)
+    # §5: the model may accept their counter early, but only when it already scores at least as well as the
+    # offer we are about to make (counters only improve round over round, so an earlier accept is a loss).
+    may_accept = score_offer(last_counter, target) >= max(config.ACCEPT_THRESHOLD, score_offer(offer, target))
+    return Plan(offer, claim, note, may_accept)
 
 
 # --- §4.4 guardrails ---------------------------------------------------------
@@ -149,8 +160,8 @@ def apply_guardrails(
     if action == "accept":
         if last_counter is None:
             deviations.append("accept without a counter on the table")
-        elif score_offer(last_counter, target) < config.ACCEPT_THRESHOLD:
-            deviations.append("accept of a counter below the walk-away score")
+        elif not plan.may_accept or score_offer(last_counter, target) < config.ACCEPT_THRESHOLD:
+            deviations.append("accept of a counter that scores below our planned offer or the walk-away line")
         else:
             return Turn("accept", last_counter, message, deviations, served_by, raw)
         return Turn("offer", plan.offer, message, deviations, served_by, raw)  # the price given was theirs, not ours
@@ -210,7 +221,7 @@ def round_prompt(round_no: int, plan: Plan, last_counter: Offer | None, supplier
         f"({plan.note})."
     )
     if plan.may_accept:
-        lines.append('You may instead accept their last counteroffer with action "accept".')
+        lines.append('Their last counteroffer already scores at least as well as this plan; you may accept it instead with action "accept".')
     if round_no == 3:
         lines.append("This is our final offer; make it count.")
     lines.append("Reply with JSON only.")
