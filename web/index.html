@@ -35,7 +35,7 @@
     --s-valuecraft: #a86f00;
     --s-ridgeline: #6250d6;
     --radius: 14px;
-    --fs: 17px;
+    --fs: 18px;
   }
   * { box-sizing: border-box; }
   html { font-size: var(--fs); }
@@ -87,11 +87,47 @@
   .scene { position: absolute; inset: 0; padding: 14px; display: none; }
   .scene.active { display: grid; }
 
-  /* rooms scene */
-  #scene-rooms { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 460px; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
-  #scene-rooms > div, .rl-grid > div { min-height: 0; min-width: 0; display: flex; flex-direction: column; }
-  #scene-rooms > div > .panel, .rl-grid > div > .panel { flex: 1; }
-  aside { grid-column: 3; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+  /* rooms scene: one focused room, the other suppliers as compact cards in a strip */
+  #scene-rooms { grid-template-columns: minmax(0, 1fr) 500px; grid-template-rows: auto minmax(0, 1fr); gap: 16px; padding: 16px; }
+  .strip { grid-column: 1; grid-row: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  #focus-slot, .rl-grid > div { min-height: 0; min-width: 0; display: flex; flex-direction: column; }
+  #focus-slot { grid-column: 1; grid-row: 2; }
+  #focus-slot > .panel, .rl-grid > div > .panel { flex: 1; }
+  #parking { display: none; }
+  aside { grid-column: 2; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+
+  .mini { display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer; font: inherit; color: var(--text); text-align: left; position: relative; }
+  .mini:hover { border-color: var(--text-2); }
+  .mini.flash { animation: flash 1.8s ease-out 1; }
+  .mini-top { display: flex; align-items: center; gap: 12px; }
+  .mini-top .swatch { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+  .mini-top .name { font-size: 1.35rem; font-weight: 800; flex: 1; }
+  .mini-top .st { width: 14px; height: 14px; border-radius: 50%; background: var(--border); flex: none; }
+  .mini-top .st.live { background: var(--good); animation: pulse 1.2s ease-in-out infinite; }
+  .mini-top .st.deal { background: var(--good); }
+  .mini-top .st.walk { background: var(--critical); }
+  .mini-top .st.nodeal { background: var(--muted); }
+  .mini-top .st-label { font-size: 1rem; color: var(--text-2); font-weight: 600; min-width: 92px; text-align: right; }
+  .mini-top .st-label.walk { color: var(--critical); }
+  .mini-nums { display: flex; gap: 28px; }
+  .mini-nums .num { font-size: 2.1rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
+  .mini-nums .lbl { font-size: 0.92rem; color: var(--text-2); font-weight: 600; }
+  .mini .hint { font-size: 0.85rem; font-weight: 700; color: var(--text-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 8px; background: var(--surface-2); flex: none; }
+
+  .focused .room-title h2 { font-size: 1.7rem; }
+  .focused .scores { font-size: 1.15rem; }
+  .focused .card .k { font-size: 1rem; padding: 4px 12px; }
+  .focused .panel-body { padding: 18px 26px; }
+  .focused .thread { gap: 18px; }
+  .focused .msg { max-width: 72%; }
+  .focused .bubble { font-size: 1.25rem; padding: 14px 20px; line-height: 1.42; }
+  .focused .who { font-size: 0.98rem; }
+  .focused .chip { font-size: 1rem; padding: 4px 12px; }
+  .focused .outcome { font-size: 1.3rem; padding: 12px 26px; }
+  .focused .outcome .score { font-size: 1.9rem; }
+  .focused .note { font-size: 1.05rem; }
+  .focused .typing { font-size: 1.05rem; }
+  body:not(.show-tabs) .room .tabs { display: none; }   /* per-deal tabs are hidden; press t to show them */
 
   .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
   .panel-head { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex: none; }
@@ -161,7 +197,11 @@
   @keyframes bounce { 0%,80%,100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-5px); opacity: 1; } }
 
   /* coach */
-  #coach .panel-body { display: flex; flex-direction: column; gap: 12px; }
+  #coach .panel-body { display: flex; flex-direction: column; gap: 14px; }
+  #coach .decision { padding: 14px 18px; gap: 8px; }
+  #coach .dhead .sup { font-size: 1.15rem; }
+  #coach .dline, #coach .dwhy, #coach .decision ul { font-size: 1.05rem; }
+  #coach .placeholder { padding: 24px 10px; font-size: 1.05rem; }
   .decision { border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; background: var(--surface-2); display: flex; flex-direction: column; gap: 6px; animation: fadein 0.4s ease-out; }
   @keyframes fadein { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
   .decision.kept { border-left: 4px solid var(--good); }
@@ -235,9 +275,9 @@
   <div class="brand">DealMind<small>Crusoe Managed Inference · Nemotron · Qwen</small></div>
   <div class="round" id="round-label">waiting for a run…</div>
   <nav>
-    <button data-scene="rooms" class="active">Negotiations<span class="dot"></span></button>
-    <button data-scene="playbook">Playbook<span class="dot"></span></button>
-    <button data-scene="ridgeline">Ridgeline test<span class="dot"></span></button>
+    <button data-scene="rooms" class="active" title="n · 1–4 picks the supplier">Negotiations<span class="dot"></span></button>
+    <button data-scene="playbook" title="p">Playbook<span class="dot"></span></button>
+    <button data-scene="ridgeline" title="r">Ridgeline test<span class="dot"></span></button>
   </nav>
   <div class="spacer"></div>
   <div class="ticker idle" id="ticker"><span class="pulse"></span><span id="ticker-text">connecting…</span></div>
@@ -248,19 +288,20 @@
 
 <main>
   <section id="scene-rooms" class="scene active">
-    <div id="rooms-slot-0"></div><div id="rooms-slot-1"></div>
+    <div class="strip" id="strip"></div>
+    <div id="focus-slot"></div>
     <aside>
       <div class="panel" id="coach">
-        <div class="panel-head"><h2>Coach</h2><span class="tag" style="margin-left:auto">Nemotron Super 120B</span></div>
-        <div class="panel-body" id="coach-body"><div class="placeholder">The coach speaks after each round: one knob at a time, kept only if it wins.</div></div>
+        <div class="panel-head"><h2 id="coach-title">Coach</h2><span class="tag" style="margin-left:auto">Nemotron Super 120B</span></div>
+        <div class="panel-body" id="coach-body"></div>
       </div>
       <div class="panel" id="chart-panel">
-        <div class="panel-head"><h2>Learning curve</h2><span class="tag" style="margin-left:auto">line: best card so far · ● kept ○ discarded</span></div>
+        <div class="panel-head"><h2>Learning curve</h2><span class="tag" style="margin-left:auto">best card so far · ● kept ○ discarded</span></div>
         <div class="panel-body"><canvas id="curve"></canvas></div>
       </div>
     </aside>
-    <div id="rooms-slot-2"></div><div id="rooms-slot-3"></div>
   </section>
+  <div id="parking"></div>
 
   <section id="scene-playbook" class="scene">
     <div class="pb-controls">
@@ -323,8 +364,12 @@
       this.body = el('div', 'panel-body');
       this.body.append(el('div', 'placeholder', 'Waiting for the first deal…'));
       this.root.append(head, this.body);
-      mount.replaceChildren(this.root);
+      if (mount) mount.replaceChildren(this.root);
+      this.latest = null;  // {outcome, score} of the last finished deal
+      this.bestScore = null;
+      this.onChange = null;
     }
+    changed() { if (this.onChange) this.onChange(this); }
     setCard(card) {
       if (!card) return;
       this.prevCard = this.card && !sameCard(this.card, card) ? this.card : this.prevCard;
@@ -361,6 +406,7 @@
       this.setCard(ev.card);
       this.setTyping(t, 'neg');
       this.show(t);
+      this.changed();
       return t;
     }
     threadFor(ev, test) { return this.threads.find(t => t.open && test(t)) || null; }
@@ -421,6 +467,8 @@
       t.el.insertBefore(badge, t.typing);
       if (ev.outcome === 'walk_away') this.flash();
       this.show(t);
+      this.latest = { outcome: ev.outcome, score: ev.score };
+      this.changed();
       return t;
     }
     report(ev) {
@@ -447,10 +495,18 @@
       t.typing.append(dots, el('span', null, who === 'neg' ? 'negotiator is writing…' : `${this.supplierName} is replying…`));
     }
     show(t, scroll = true) {
+      // Only the latest deal is shown (older concurrent threads stay reachable through the tabs, key t).
+      const newest = this.threads[this.threads.length - 1];
+      if (t !== newest && !document.body.classList.contains('show-tabs')) t = newest;
       this.active = t;
       this.threads.forEach(x => x.el.classList.toggle('active', x === t));
       this.renderTabs();
       if (scroll) requestAnimationFrame(() => { this.body.scrollTop = this.body.scrollHeight; });
+    }
+    status() {
+      if (this.threads.some(t => t.open)) return 'live';
+      if (!this.latest) return 'idle';
+      return this.latest.outcome === 'deal' ? 'deal' : this.latest.outcome === 'walk_away' ? 'walk' : 'nodeal';
     }
     renderTabs() {
       this.tabsEl.replaceChildren();
@@ -465,7 +521,9 @@
         this.tabsEl.append(b);
       }
     }
-    flash() { this.root.classList.remove('flash'); void this.root.offsetWidth; this.root.classList.add('flash'); }
+    flash() {
+      for (const node of [this.root, this.mini].filter(Boolean)) { node.classList.remove('flash'); void node.offsetWidth; node.classList.add('flash'); }
+    }
     stats() {
       const closed = this.threads.filter(t => !t.open);
       return { n: closed.length, mean: closed.length ? closed.reduce((a, t) => a + (t.score || 0), 0) / closed.length : null };
@@ -475,23 +533,74 @@
   // ---------- state ----------
   const rooms = {};           // supplier key -> Room (training suppliers)
   const arms = {};            // 'blank' | 'informed' -> Room for Ridgeline
-  const slots = [0, 1, 2, 3].map(i => $('#rooms-slot-' + i));
   const order = ['northwood', 'quickfurn', 'harlow', 'valuecraft'];
   const coachBody = $('#coach-body');
   const prevBest = {};        // supplier -> {card, score} before this round's coach decision
   const curve = { rounds: 0, data: {} };
   let totalRounds = null, currentRound = null, runId = null, paused = false, userPinned = false, ridgelineCount = 0, lastDraft = null;
+  let focused = 'northwood';  // the one large room; the others are compact cards in the strip
   const buffer = [];
+  const parking = $('#parking'), strip = $('#strip'), focusSlot = $('#focus-slot');
 
-  order.forEach((k, i) => { rooms[k] = new Room(k, slots[i]); rooms[k].setCard(DEFAULT_CARD); });
-  setTimeout(() => { arm('blank'); arm('informed'); }, 0);  // after arm() is defined below
-
-  function roomFor(key, idx) {
+  function roomFor(key) {
     if (rooms[key]) return rooms[key];
-    const slot = slots[idx !== undefined ? idx : Object.keys(rooms).length % 4];
-    rooms[key] = new Room(key, slot);
-    return rooms[key];
+    const room = new Room(key, null);
+    room.setCard(DEFAULT_CARD);
+    room.mini = miniCard(room);
+    room.onChange = updateMini;
+    rooms[key] = room;
+    parking.append(room.root);
+    layoutRooms();
+    return room;
   }
+  function miniCard(room) {
+    const b = el('button', 'mini');
+    b.dataset.key = room.key;
+    const top = el('div', 'mini-top');
+    const sw = el('span', 'swatch'); sw.style.background = COLORS[room.key] || '#555';
+    const idx = order.indexOf(room.key);
+    if (idx >= 0) top.append(el('span', 'hint', String(idx + 1)));
+    top.append(sw, el('span', 'name', nameOf(room.key)), el('span', 'st'), el('span', 'st-label', 'waiting'));
+    const nums = el('div', 'mini-nums');
+    for (const [cls, lbl] of [['latest', 'latest deal'], ['best', 'best so far']]) {
+      const box = el('div'); box.append(el('div', `num mono ${cls}`, '—'), el('div', 'lbl', lbl)); nums.append(box);
+    }
+    b.append(top, nums);
+    b.onclick = () => focus(room.key);
+    return b;
+  }
+  function updateMini(room) {
+    const b = room.mini; if (!b) return;
+    const st = room.status();
+    b.querySelector('.st').className = 'st ' + st;
+    const lbl = b.querySelector('.st-label');
+    lbl.textContent = { live: 'negotiating', deal: 'deal', walk: 'walked away', nodeal: 'no deal', idle: 'waiting' }[st];
+    lbl.className = 'st-label ' + st;
+    b.querySelector('.latest').textContent = room.latest ? fmtScore(room.latest.score) : '—';
+    b.querySelector('.best').textContent = room.bestScore === null ? '—' : fmtScore(room.bestScore);
+  }
+  function layoutRooms() {
+    const keys = order.filter(k => rooms[k]).concat(Object.keys(rooms).filter(k => !order.includes(k)));
+    if (!rooms[focused]) focused = keys[0];
+    strip.replaceChildren(...keys.filter(k => k !== focused).map(k => rooms[k].mini));
+    for (const k of keys) {
+      const room = rooms[k];
+      room.root.classList.toggle('focused', k === focused);
+      if (k === focused) focusSlot.replaceChildren(room.root); else parking.append(room.root);
+      updateMini(room);
+    }
+  }
+  function focus(key) {
+    if (!rooms[key] || key === focused) return;
+    focused = key;
+    layoutRooms();
+    renderCoach();
+    highlightCurve();
+    const room = rooms[key];
+    if (room.active) room.show(room.active);
+  }
+  order.forEach(k => roomFor(k));
+  setTimeout(() => { arm('blank'); arm('informed'); }, 0);  // after arm() is defined below
 
   // ---------- chart ----------
   const ctx = $('#curve').getContext('2d');
@@ -504,12 +613,12 @@
       chart.data.datasets.forEach((ds, i) => {
         if (ds.kind !== 'best') return;
         const meta = chart.getDatasetMeta(i);
-        const pts = meta.data.filter((p, j) => ds.data[j] !== null && ds.data[j] !== undefined);
-        if (pts.length) labels.push({ text: ds.label.split(' ')[0], x: pts[pts.length - 1].x + 8, y: pts[pts.length - 1].y });
+          const pts = meta.data.filter((p, j) => ds.data[j] !== null && ds.data[j] !== undefined);
+        if (pts.length) labels.push({ text: ds.label.split(' ')[0], x: pts[pts.length - 1].x + 8, y: pts[pts.length - 1].y, on: ds.label === nameOf(focused) });
       });
       labels.sort((a, b) => a.y - b.y);   // push overlapping end labels apart (min 15px)
       for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 15) labels[i].y = labels[i - 1].y + 15;
-      labels.forEach(l => ctx.fillText(l.text, l.x, l.y));
+      labels.forEach(l => { ctx.fillStyle = l.on ? '#111111' : '#8a8a84'; ctx.font = `${l.on ? 800 : 500} 13px -apple-system, Segoe UI, Roboto, sans-serif`; ctx.fillText(l.text, l.x, l.y); });
       ctx.restore();
     }
   };
@@ -560,9 +669,29 @@
     s.line.data[round - 1] = (best === null || best === undefined) ? score : best;
     s.dots.data[round - 1] = score;
     s.dots.pointBackgroundColor[round - 1] = result === 'discarded' ? '#ffffff' : s.color;
-    chart.update();
+    highlightCurve();
     const room = rooms[key];
-    if (room) room.setRoundScores(s.line.data.filter(v => v !== null && v !== undefined));  // best so far per round
+    if (room) {
+      room.setRoundScores(s.line.data.filter(v => v !== null && v !== undefined));  // best so far per round
+      room.bestScore = s.line.data[round - 1];
+      room.changed();
+    }
+  }
+  function fade(hex, alpha) {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+  }
+  function highlightCurve() {
+    // The focused supplier's line is full strength; the others fade back.
+    for (const [key, s] of Object.entries(curve.data)) {
+      const on = key === focused;
+      s.line.borderColor = on ? s.color : fade(s.color, 0.22);
+      s.line.borderWidth = on ? 3.5 : 2;
+      s.dots.borderColor = s.dots.pointBorderColor = on ? s.color : fade(s.color, 0.3);
+      s.dots.pointBackgroundColor = s.dots.pointBackgroundColor.map(c => c === '#ffffff' ? c : (on ? s.color : fade(s.color, 0.3)));
+      s.dots.pointRadius = on ? 6 : 4;
+    }
+    chart.update();
   }
 
   // ---------- coach panel ----------
@@ -599,7 +728,8 @@
       d.append(nx);
     }
     if (ev.why) d.append(el('div', 'dwhy', ev.why));
-    pushDecision(d);
+    decisions[ev.supplier] = d;
+    renderCoach();
     prevBest[ev.supplier] = { card: ev.best, score: ev.best_score };
     plot(ev.supplier, ev.round, ev.score, ev.best_score, ev.result);
     if (rooms[ev.supplier] && ev.next_card) rooms[ev.supplier].nextCard = ev.next_card;
@@ -609,13 +739,19 @@
     const head = el('div', 'dhead'); head.append(el('span', 'sup', 'General tactics rewritten'), el('span', 'rnd', `round ${ev.round}`));
     d.append(head);
     const ul = el('ul'); (ev.tactics || []).forEach(t => ul.append(el('li', null, t))); d.append(ul);
-    pushDecision(d);
+    tacticsEl = d;
+    renderCoach();
   }
-  function pushDecision(d) {
-    const ph = coachBody.querySelector('.placeholder'); if (ph) ph.remove();
-    coachBody.prepend(d);
+  const decisions = {};  // supplier -> latest decision element
+  let tacticsEl = null;
+  function renderCoach() {
+    // Only the focused supplier's latest decision, plus the general tactics.
+    $('#coach-title').textContent = `Coach · ${nameOf(focused)}`;
+    const d = decisions[focused] || el('div', 'placeholder', `The coach speaks about ${nameOf(focused)} after each round: one knob at a time, kept only if it wins.`);
+    coachBody.replaceChildren(d, ...(tacticsEl ? [tacticsEl] : []));
     coachBody.scrollTop = 0;
   }
+  renderCoach();
 
   // ---------- playbook ----------
   const pb = { rounds: [], cache: {} };
@@ -733,7 +869,9 @@
   document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => scene(b.dataset.scene, true)));
   document.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') return;
-    if (e.key === '1') scene('rooms', true); if (e.key === '2') scene('playbook', true); if (e.key === '3') scene('ridgeline', true);
+    if (e.key >= '1' && e.key <= '4') { scene('rooms', true); focus(order[Number(e.key) - 1]); }
+    if (e.key === 'n') scene('rooms', true); if (e.key === 'p') scene('playbook', true); if (e.key === 'r') scene('ridgeline', true);
+    if (e.key === 't') { document.body.classList.toggle('show-tabs'); }
     if (e.key === ' ') { e.preventDefault(); togglePause(); }
   });
   function togglePause() {
@@ -778,7 +916,7 @@
         runId = ev.run_id || runId; totalRounds = ev.rounds || totalRounds; setRounds(totalRounds); chart.update(); roundLabel(); break;
       case 'round_start':
         currentRound = ev.round; roundLabel();
-        Object.entries(ev.cards || {}).forEach(([k, card], i) => roomFor(k, i).setCard(card));
+        Object.entries(ev.cards || {}).forEach(([k, card]) => roomFor(k).setCard(card));
         autoScene('rooms'); break;
       case 'negotiation_start':
         if (isRidge) { const a = armFor(ev); ridgelineCount++; const r = arm(a); r.start(ev); if (a === 'blank') r.setCard(ev.card); ping('ridgeline'); autoScene('ridgeline'); }
@@ -818,6 +956,7 @@
     modeEl.textContent = speed > 0 ? `REPLAY ×${speed}` : 'LIVE'; modeEl.classList.toggle('live', !(speed > 0));
     roundLabel(); refreshPlaybooks(true);
     if (url.searchParams.get('scene')) scene(url.searchParams.get('scene'), true);
+    if (url.searchParams.get('focus')) focus(url.searchParams.get('focus'));
     const gateParam = url.searchParams.has('gate') ? `&gate=${encodeURIComponent(url.searchParams.get('gate'))}` : '';
     const es = new EventSource(`/events?run=${encodeURIComponent(runId || '')}&speed=${speed}${gateParam}`);
     es.onopen = () => setTicker(speed > 0 ? 'replaying recorded run' : 'listening for events', '');
