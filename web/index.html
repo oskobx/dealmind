@@ -451,7 +451,9 @@
       for (const t of recent) {
         const b = el('button', 'tab' + (t === this.active ? ' active' : ''));
         const st = el('span', 'st ' + (t.open ? 'live' : t.outcome === 'deal' ? 'deal' : t.outcome === 'walk_away' ? 'walk' : 'nodeal'));
-        b.append(st, el('span', null, (t.round ? `R${t.round} · ` : '') + t.deal), el('span', 'mono', t.open ? '' : fmtScore(t.score)));
+        // Ridgeline arms are outside the training rounds (§10): number their deals instead.
+        const prefix = this.key === 'ridgeline' ? `Deal ${t.id} · ` : (t.round ? `R${t.round} · ` : '');
+        b.append(st, el('span', null, prefix + t.deal), el('span', 'mono', t.open ? '' : fmtScore(t.score)));
         b.onclick = () => this.show(t);
         this.tabsEl.append(b);
       }
