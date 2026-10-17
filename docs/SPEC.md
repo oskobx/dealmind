@@ -319,7 +319,7 @@ reservation = target × floor × (1 + quality_adj[quality]) × (1 + sum(hot_butt
 | Floor (Standard) | 95% | 85% | 90% | 78% | 88% |
 | Quality adj: Basic | −10% | −10% | −10% | −10% | −10% |
 | Quality adj: Premium | +3% (oak specialist) | +15% | +20% | +15% | +8% |
-| Fastest delivery | 21 days | 7 days | 14 days | 28 days | 10 days |
+| Fastest delivery | 21 days | 7 days | 14 days | 21 days | 10 days |
 | Opening ask | 125%, Premium, 28 d | 120%, Standard, 14 d | 125%, Standard, 21 d | 120%, Basic, 35 d | 125%, Standard, 17 d |
 | Patience | 3 rounds | 3 rounds | 3 rounds | 3 rounds | 3 rounds |
 
@@ -347,10 +347,15 @@ reservation = target × floor × (1 + quality_adj[quality]) × (1 + sum(hot_butt
 
 **ValueCraft** (weak, cheapest, slow)
 - each 7 days of `accepted_delivery` beyond 28 → −4% (max −12%)
-- observed tone firm → −5%
-- observed speed slow → −3%
+- observed tone firm → −8%
+- observed speed slow → −5%
 - observed tactic ditf → −3%
 - Best card: `ditf, aggressive, slow, firm, gives_up=delivery`
+- Tuned Oct 17 after the no-LLM simulation: tone −5→−8%, speed −3→−5%, fastest
+  delivery 28→21 days. With 28 days the default card's round-2 ask (Basic, ~24 days)
+  was too fast to accept, so the default escaped the Basic trap and scored ~78 against
+  ~81 for the best card. At 21 days the default card, which gives up quality first,
+  gets Basic at the target price (~53) while the best card gets Premium (~81).
 
 **Ridgeline Furnishings** (held out; strong; cares about delivery)
 - `opening_ratio < 0.80` → +8%

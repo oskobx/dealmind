@@ -217,7 +217,7 @@ SUPPLIERS: dict[str, SupplierCard] = {
         persona="Budget manufacturer with a long production queue. Price is everything.",
         floor=0.78,
         quality_adj={"basic": BASIC_ADJ, "standard": 0.0, "premium": 0.15},
-        fastest_delivery=28,
+        fastest_delivery=21,  # opens at 35 but can rush; 28 made the default card's R2 ask too fast to accept
         opening_ask=1.20,
         opening_quality="basic",
         opening_delivery=35,
@@ -226,8 +226,8 @@ SUPPLIERS: dict[str, SupplierCard] = {
         slow_delivery_step=7,
         slow_delivery_adj=-0.04,
         slow_delivery_max=-0.12,
-        tone_adj={"firm": -0.05},
-        speed_adj={"slow": -0.03},
+        tone_adj={"firm": -0.08},
+        speed_adj={"slow": -0.05},
         tactic_adj={"ditf": -0.03},
     ),
     "ridgeline": SupplierCard(
