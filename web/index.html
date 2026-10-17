@@ -886,15 +886,16 @@
   function replayWait(ev) {
     waiting = ev;
     const btn = $('#next');
-    btn.textContent = ev.next === 'ridgeline' ? 'Ridgeline test ▶' : 'Next round ▶';
+    const span = ev.next === 'fast' ? (ev.last > ev.round ? `Rounds ${ev.round}–${ev.last}` : `Round ${ev.round}`) : '';
+    btn.textContent = ev.next === 'ridgeline' ? 'Ridgeline test ▶' : ev.next === 'fast' ? `${span} ⏩` : 'Next round ▶';
     btn.hidden = false;
-    setTicker(ev.next === 'ridgeline' ? 'Ridgeline test ready, press Next' : `Round ${ev.round} ready, press Next`, 'ready');
+    setTicker(ev.next === 'ridgeline' ? 'Ridgeline test ready, press Next' : ev.next === 'fast' ? `${span} ready to fast-forward, press Next` : `Round ${ev.round} ready, press Next`, 'ready');
   }
   async function next() {
     if (!waiting) return;
     const ev = waiting; waiting = null;
     $('#next').hidden = true;
-    setTicker(ev.next === 'ridgeline' ? 'playing the Ridgeline test…' : `playing round ${ev.round}…`, '');
+    setTicker(ev.next === 'ridgeline' ? 'playing the Ridgeline test…' : ev.next === 'fast' ? 'fast-forwarding…' : `playing round ${ev.round}…`, '');
     try { await fetch('/api/next', { method: 'POST' }); } catch (e) { setTicker('could not reach the server', 'retry'); waiting = ev; $('#next').hidden = false; }
   }
   $('#next').addEventListener('click', next);
@@ -952,14 +953,17 @@
     let cfg = {};
     try { cfg = await (await fetch('/api/config')).json(); } catch (e) { setTicker('server unreachable', 'retry'); return; }
     runId = url.searchParams.get('run') || cfg.run_id;
+    // Replay speed: a number is uniform; null means the server's default schedule.
     const speed = url.searchParams.has('speed') ? Number(url.searchParams.get('speed')) : cfg.speed;
+    const replay = url.searchParams.has('speed') ? speed > 0 : cfg.mode === 'replay';
     const modeEl = $('#mode');
-    modeEl.textContent = speed > 0 ? `REPLAY ×${speed}` : 'LIVE'; modeEl.classList.toggle('live', !(speed > 0));
+    modeEl.textContent = !replay ? 'LIVE' : speed > 0 ? `REPLAY ×${speed}` : 'REPLAY'; modeEl.classList.toggle('live', !replay);
     roundLabel(); refreshPlaybooks(true);
     if (url.searchParams.get('scene')) scene(url.searchParams.get('scene'), true);
     if (url.searchParams.get('focus')) focus(url.searchParams.get('focus'));
     const gateParam = url.searchParams.has('gate') ? `&gate=${encodeURIComponent(url.searchParams.get('gate'))}` : '';
-    const es = new EventSource(`/events?run=${encodeURIComponent(runId || '')}&speed=${speed}${gateParam}`);
+    const speedParam = replay && speed > 0 ? `&speed=${speed}` : '';
+    const es = new EventSource(`/events?run=${encodeURIComponent(runId || '')}&mode=${replay ? 'replay' : 'live'}${speedParam}${gateParam}`);
     es.onopen = () => setTicker(speed > 0 ? 'replaying recorded run' : 'listening for events', '');
     es.onerror = () => setTicker('stream closed, reconnecting…', 'retry');
     es.onmessage = e => {

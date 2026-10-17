@@ -27,7 +27,7 @@ WEB = ROOT / "web"
 RUNS = ROOT / "runs"
 RUN_ID_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
-SETTINGS: dict[str, object] = {"run_id": None, "speed": 0.0, "max_gap": 5.0, "gate": True}
+SETTINGS: dict[str, object] = {"run_id": None, "replay": False, "speed": None, "max_gap": 5.0, "gate": True}  # speed None = default schedule
 _next_signals: set[asyncio.Event] = set()  # replay streams waiting for the presenter's "Next"
 STOP = asyncio.Event()  # set on Ctrl+C so open event streams end at once instead of holding the server
 
@@ -67,8 +67,8 @@ def index() -> FileResponse:
 
 @app.get("/api/config")
 def config() -> JSONResponse:
-    speed = float(SETTINGS["speed"] or 0)
-    return JSONResponse({"run_id": SETTINGS["run_id"], "speed": speed, "max_gap": SETTINGS["max_gap"], "gate": bool(SETTINGS["gate"]), "mode": "replay" if speed > 0 else "live"})
+    replay = bool(SETTINGS["replay"])
+    return JSONResponse({"run_id": SETTINGS["run_id"], "speed": SETTINGS["speed"] if replay else 0, "max_gap": SETTINGS["max_gap"], "gate": bool(SETTINGS["gate"]), "mode": "replay" if replay else "live"})
 
 
 @app.post("/api/next")
@@ -177,13 +177,47 @@ def load_events(path: Path) -> list[tuple[str, dict]]:
     return out
 
 
-def up_next(events: list[tuple[str, dict]], index: int) -> dict:
-    """What the presenter's next press will play: the next training round, the Ridgeline test, or nothing."""
+def is_ridgeline(ev: dict) -> bool:
+    return str(ev.get("kind", "")).startswith("ridgeline") or ev.get("supplier") == "ridgeline"
+
+
+def segments(events: list[tuple[str, dict]]) -> list[int | str]:
+    """The segment of every event: the training round it belongs to, or "ridgeline" from the
+    first Ridgeline event on. Events before round 1 count as round 1."""
+    out: list[int | str] = []
+    current: int | str = 1
+    for _, ev in events:
+        if current != "ridgeline":
+            if is_ridgeline(ev):
+                current = "ridgeline"
+            elif ev.get("kind") == "round_start" and isinstance(ev.get("round"), int):
+                current = ev["round"]
+        out.append(current)
+    return out
+
+
+def default_speed(segment: int | str) -> float:
+    """Default replay schedule: rounds 1-2 and Ridgeline at recorded speed, rounds 3+ instant (0)."""
+    if segment == "ridgeline":
+        return 1.0
+    return 1.0 if segment <= 2 else 0.0
+
+
+def up_next(events: list[tuple[str, dict]], index: int, speed_of) -> dict:
+    """What the presenter's next press will play: a round, a fast-forward over instant rounds,
+    the Ridgeline test, or nothing."""
+    segs = segments(events)
+    rounds = sorted({s for s in segs[index:] if isinstance(s, int)})
     for _, ev in events[index:]:
-        kind = str(ev.get("kind", ""))
-        if kind == "round_start":
-            return {"next": "round", "round": ev.get("round")}
-        if kind.startswith("ridgeline") or ev.get("supplier") == "ridgeline":
+        if ev.get("kind") == "round_start" and isinstance(ev.get("round"), int):
+            r = ev["round"]
+            if speed_of(r) == 0:
+                last = r
+                while last + 1 in rounds and speed_of(last + 1) == 0:
+                    last += 1
+                return {"next": "fast", "round": r, "last": last}
+            return {"next": "round", "round": r}
+        if is_ridgeline(ev):
             return {"next": "ridgeline"}
     return {"next": "end"}
 
@@ -209,14 +243,18 @@ async def gate(request: Request, info: dict):
         _next_signals.discard(signal)
 
 
-async def replay_stream(path: Path, speed: float, max_gap: float, gated: bool, start_after: int, request: Request):
-    """Replay mode: paced by the recorded `t` gaps (divided by speed, capped at max_gap seconds).
+async def replay_stream(path: Path, speed: float | None, max_gap: float, gated: bool, start_after: int, request: Request):
+    """Replay mode. Each event is paced by its recorded `t` gap divided by its segment's speed
+    (capped at max_gap seconds); speed 0 sends the segment instantly. speed=None uses the default
+    schedule (rounds 1-2 and Ridgeline real time, rounds 3+ instant); a number is a uniform speed.
     With gating, waits for the presenter before the first event and after each round's coach
-    updates (the `round_end` event); the last gate releases the Ridgeline test."""
+    updates (`round_end`), except between two instant rounds, so they play as one fast-forward."""
     events = load_events(path)
+    segs = segments(events)
+    speed_of = default_speed if speed is None else (lambda _segment: speed)
     last_t: float | None = None
     if gated and start_after == 0:
-        async for chunk in gate(request, up_next(events, 0)):
+        async for chunk in gate(request, up_next(events, 0, speed_of)):
             yield chunk
     for seq, (line, ev) in enumerate(events, start=1):
         if seq <= start_after:
@@ -224,15 +262,17 @@ async def replay_stream(path: Path, speed: float, max_gap: float, gated: bool, s
         if STOP.is_set() or await request.is_disconnected():
             return
         t = ev.get("t")
-        if isinstance(t, (int, float)) and last_t is not None:
-            if await pause(min(max(0.0, t - last_t) / speed, max_gap)):
+        pace = speed_of(segs[seq - 1])
+        if pace > 0 and isinstance(t, (int, float)) and last_t is not None:
+            if await pause(min(max(0.0, t - last_t) / pace, max_gap)):
                 return
         if isinstance(t, (int, float)):
             last_t = t
         yield frame(seq, line)
         if gated and ev.get("kind") == "round_end":
-            info = up_next(events, seq)
-            if info["next"] != "end":
+            info = up_next(events, seq, speed_of)
+            fast_through = pace == 0 and info["next"] == "fast"  # inside a fast-forward: no gate
+            if info["next"] != "end" and not fast_through:
                 async for chunk in gate(request, info):
                     yield chunk
                 if STOP.is_set():
@@ -242,27 +282,33 @@ async def replay_stream(path: Path, speed: float, max_gap: float, gated: bool, s
 
 
 @app.get("/events")
-async def events(request: Request, run: str | None = None, speed: float | None = None, gate: int | None = None) -> StreamingResponse:
+async def events(request: Request, run: str | None = None, speed: float | None = None, gate: int | None = None, mode: str | None = None) -> StreamingResponse:
+    """mode=replay|live overrides the server's mode; speed overrides the schedule (0 with mode=live)."""
     run_id = run or SETTINGS["run_id"] or newest_run_id()
     if not run_id:
         raise HTTPException(404, "no runs recorded yet")
     path = run_dir(str(run_id)) / "events.jsonl"
-    pace = float(SETTINGS["speed"] or 0) if speed is None else max(0.0, speed)
-    gated = bool(SETTINGS["gate"]) if gate is None else bool(gate)
+    replay = (mode == "replay") if mode in ("replay", "live") else (bool(SETTINGS["replay"]) or (speed is not None and speed > 0))
+    pace = SETTINGS["speed"] if speed is None else max(0.0, speed)
+    gated = (bool(SETTINGS["gate"]) if gate is None else bool(gate)) and replay
     last_id = request.headers.get("last-event-id")
     start_after = int(last_id) if last_id and last_id.isdigit() else 0
     headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"}
-    stream = replay_stream(path, pace, float(SETTINGS["max_gap"]), gated, start_after, request) if pace > 0 else live_stream(path, start_after, request)
+    stream = replay_stream(path, pace, float(SETTINGS["max_gap"]), gated, start_after, request) if replay else live_stream(path, start_after, request)
     return StreamingResponse(stream, media_type="text/event-stream", headers=headers)
 
 
-def serve(run_id: str | None, speed: float = 0.0, port: int = 8000, host: str = "127.0.0.1", open_browser: bool = True, max_gap: float = 5.0, gate: bool = True) -> None:
+def serve(run_id: str | None, speed: float | None = 0.0, port: int = 8000, host: str = "127.0.0.1", open_browser: bool = True, max_gap: float = 5.0, gate: bool = True, replay: bool | None = None) -> None:
+    """speed 0 (and replay unset) = live follow; speed N > 0 = uniform replay; replay=True with
+    speed None = the default schedule (rounds 1-2 and Ridgeline real time, rounds 3+ instant)."""
     run_id = run_id or newest_run_id()
     if run_id:
         run_dir(run_id)
-    SETTINGS.update(run_id=run_id, speed=speed, max_gap=max_gap, gate=gate and speed > 0)
+    replay = bool(speed) if replay is None else replay
+    SETTINGS.update(run_id=run_id, replay=replay, speed=speed or None, max_gap=max_gap, gate=gate and replay)
     url = f"http://{host}:{port}/"
-    mode = f"replay x{speed:g}" + (", presenter gated: Next plays each round" if gate else "") if speed > 0 else "live (following the file)"
+    pacing = "rounds 1-2 and Ridgeline real time, rounds 3+ fast-forward" if not speed else f"x{speed:g}"
+    mode = f"replay {pacing}" + (", presenter gated: press Next" if gate else "") if replay else "live (following the file)"
     print(f"DealMind UI: {url}  run={run_id or '(none yet)'}  mode={mode}")
     if open_browser:
         threading.Timer(0.8, webbrowser.open, args=(url,)).start()
@@ -280,14 +326,15 @@ class Server(uvicorn.Server):
 def main() -> None:
     parser = argparse.ArgumentParser(description="DealMind web UI server.")
     parser.add_argument("--run", default=None, help="run id under runs/ (default: the newest)")
-    parser.add_argument("--speed", type=float, default=0.0, help="replay speed; 0 = live follow (default)")
+    parser.add_argument("--speed", type=float, default=0.0, help="uniform replay speed; 0 = live follow (default)")
+    parser.add_argument("--replay", action="store_true", help="replay with the default schedule (as replay.py does)")
     parser.add_argument("--max-gap", type=float, default=5.0, help="replay: longest pause between events, seconds")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--no-open", action="store_true", help="do not open the browser")
     parser.add_argument("--autoplay", action="store_true", help="replay: do not wait for Next between rounds")
     args = parser.parse_args()
-    serve(args.run, args.speed, args.port, args.host, not args.no_open, args.max_gap, gate=not args.autoplay)
+    serve(args.run, args.speed or None, args.port, args.host, not args.no_open, args.max_gap, gate=not args.autoplay, replay=args.replay or args.speed > 0)
 
 
 if __name__ == "__main__":
