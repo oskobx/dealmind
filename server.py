@@ -206,16 +206,11 @@ def default_speed(segment: int | str) -> float:
 def up_next(events: list[tuple[str, dict]], index: int, speed_of) -> dict:
     """What the presenter's next press will play: a round, a fast-forward over instant rounds,
     the Ridgeline test, or nothing."""
-    segs = segments(events)
-    rounds = sorted({s for s in segs[index:] if isinstance(s, int)})
     for _, ev in events[index:]:
         if ev.get("kind") == "round_start" and isinstance(ev.get("round"), int):
             r = ev["round"]
-            if speed_of(r) == 0:
-                last = r
-                while last + 1 in rounds and speed_of(last + 1) == 0:
-                    last += 1
-                return {"next": "fast", "round": r, "last": last}
+            if speed_of(r) == 0:  # an instant round: one press applies the whole round
+                return {"next": "fast", "round": r, "last": r}
             return {"next": "round", "round": r}
         if is_ridgeline(ev):
             return {"next": "ridgeline"}
@@ -248,7 +243,7 @@ async def replay_stream(path: Path, speed: float | None, max_gap: float, gated: 
     (capped at max_gap seconds); speed 0 sends the segment instantly. speed=None uses the default
     schedule (rounds 1-2 and Ridgeline real time, rounds 3+ instant); a number is a uniform speed.
     With gating, waits for the presenter before the first event and after each round's coach
-    updates (`round_end`), except between two instant rounds, so they play as one fast-forward."""
+    updates (`round_end`); an instant round is applied in full on its press."""
     events = load_events(path)
     segs = segments(events)
     speed_of = default_speed if speed is None else (lambda _segment: speed)
@@ -271,8 +266,7 @@ async def replay_stream(path: Path, speed: float | None, max_gap: float, gated: 
         yield frame(seq, line)
         if gated and ev.get("kind") == "round_end":
             info = up_next(events, seq, speed_of)
-            fast_through = pace == 0 and info["next"] == "fast"  # inside a fast-forward: no gate
-            if info["next"] != "end" and not fast_through:
+            if info["next"] != "end":
                 async for chunk in gate(request, info):
                     yield chunk
                 if STOP.is_set():

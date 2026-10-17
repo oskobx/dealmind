@@ -3,12 +3,12 @@
     uv run replay.py <run_id>              # default schedule
     uv run replay.py <run_id> --speed 3    # uniform speed instead
 
-Default schedule: rounds 1 and 2 play at recorded speed, rounds 3 and later fast-forward
-instantly as one block (chat, coach decisions, chart and room headers land exactly as after the
-last round), and the Ridgeline test plays at recorded speed.
+Default schedule: rounds 1 and 2 play at recorded speed, rounds 3 and later are each applied
+instantly on their own press (chat, coach decisions, chart and room headers land exactly as
+after that round), and the Ridgeline test plays at recorded speed.
 
-The replay waits for the presenter at each gate: before round 1, before round 2, before the
-fast-forward ("Rounds 3–5 ⏩") and before Ridgeline ("Ridgeline test ▶"). The button on the page
+The replay waits for the presenter at each gate: before round 1, before round 2, before each
+instant round ("Round 3 ⏩", "Round 4 ⏩", ...) and before Ridgeline ("Ridgeline test ▶"). The button on the page
 or the right-arrow key releases it. --autoplay removes the waits. Long pauses between events are
 capped at --max-gap seconds so a stalled endpoint in the recording does not stall the demo.
 """
