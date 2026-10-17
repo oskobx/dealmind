@@ -47,8 +47,11 @@
   .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
 
   /* ---------- header ---------- */
+  header > * { white-space: nowrap; flex: none; }
+  header .ticker { flex: 0 1 auto; min-width: 0; }
+  header .ticker #ticker-text { overflow: hidden; text-overflow: ellipsis; }
   header {
-    height: 60px; flex: 0 0 60px; display: flex; align-items: center; gap: 22px; padding: 0 20px;
+    height: 60px; flex: 0 0 60px; display: flex; align-items: center; gap: 18px; padding: 0 20px; overflow: hidden;
     border-bottom: 1px solid var(--border); background: var(--surface);
   }
   .brand { font-weight: 800; font-size: 1.45rem; letter-spacing: 0.01em; }
@@ -64,7 +67,8 @@
   nav button.active { background: var(--surface-3); color: var(--text); border-color: var(--border); }
   nav button .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-left: 8px; vertical-align: middle; visibility: hidden; }
   nav button.ping .dot { visibility: visible; }
-  .spacer { flex: 1; }
+  header .spacer { flex: 1 1 0; min-width: 0; }
+  @media (max-width: 1800px) { .brand small { display: none; } }
   .ticker { color: var(--muted); font-size: 0.95rem; display: flex; align-items: center; gap: 10px; max-width: 520px; white-space: nowrap; overflow: hidden; }
   .ticker .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--good); flex: none; animation: pulse 1.2s ease-in-out infinite; }
   .ticker.retry #ticker-text { color: var(--warn); font-weight: 600; }
@@ -88,30 +92,33 @@
   .scene.active { display: grid; }
 
   /* rooms scene: one focused room, the other suppliers as compact cards in a strip */
-  #scene-rooms { grid-template-columns: minmax(0, 1fr) 500px; grid-template-rows: auto minmax(0, 1fr); gap: 16px; padding: 16px; }
-  .strip { grid-column: 1; grid-row: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  #scene-rooms { grid-template-columns: minmax(0, 60fr) minmax(0, 40fr); grid-template-rows: minmax(0, 1fr); gap: 16px; padding: 16px; }
+  .strip { display: flex; flex-direction: column; gap: 10px; flex: none; }
   #focus-slot, .rl-grid > div { min-height: 0; min-width: 0; display: flex; flex-direction: column; }
-  #focus-slot { grid-column: 1; grid-row: 2; }
+  #focus-slot { grid-column: 1; grid-row: 1; }
   #focus-slot > .panel, .rl-grid > div > .panel { flex: 1; }
   #parking { display: none; }
-  aside { grid-column: 2; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+  aside { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: 14px; min-height: 0; min-width: 0; }
+  #coach { flex: 1 1 auto; min-height: 160px; }
 
-  .mini { display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer; font: inherit; color: var(--text); text-align: left; position: relative; }
+  .mini { display: flex; flex-direction: row; align-items: center; gap: 14px; padding: 10px 16px; min-width: 0; overflow: hidden; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer; font: inherit; color: var(--text); text-align: left; position: relative; }
   .mini:hover { border-color: var(--text-2); }
   .mini.flash { animation: flash 1.8s ease-out 1; }
-  .mini-top { display: flex; align-items: center; gap: 12px; }
+  .mini-top { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; white-space: nowrap; }
+  .mini-top .name { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   .mini-top .swatch { width: 14px; height: 14px; border-radius: 4px; flex: none; }
-  .mini-top .name { font-size: 1.35rem; font-weight: 800; flex: 1; }
+  .mini-top .name { font-size: 1.25rem; font-weight: 800; flex: 1; }
   .mini-top .st { width: 14px; height: 14px; border-radius: 50%; background: var(--border); flex: none; }
   .mini-top .st.live { background: var(--good); animation: pulse 1.2s ease-in-out infinite; }
   .mini-top .st.deal { background: var(--good); }
   .mini-top .st.walk { background: var(--critical); }
   .mini-top .st.nodeal { background: var(--muted); }
-  .mini-top .st-label { font-size: 1rem; color: var(--text-2); font-weight: 600; min-width: 92px; text-align: right; }
+  .mini-top .st-label { font-size: 0.95rem; color: var(--text-2); font-weight: 600; flex: none; }
   .mini-top .st-label.walk { color: var(--critical); }
-  .mini-nums { display: flex; gap: 28px; }
-  .mini-nums .num { font-size: 2.1rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
-  .mini-nums .lbl { font-size: 0.92rem; color: var(--text-2); font-weight: 600; }
+  .mini-nums { display: flex; gap: 18px; flex: none; white-space: nowrap; }
+  .mini-nums > div { display: flex; align-items: baseline; gap: 6px; }
+  .mini-nums .num { font-size: 1.6rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+  .mini-nums .lbl { font-size: 0.85rem; color: var(--text-2); font-weight: 600; }
   .mini .hint { font-size: 0.85rem; font-weight: 700; color: var(--text-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 8px; background: var(--surface-2); flex: none; }
 
   .focused .room-title h2 { font-size: 1.7rem; }
@@ -288,15 +295,15 @@
 
 <main>
   <section id="scene-rooms" class="scene active">
-    <div class="strip" id="strip"></div>
     <div id="focus-slot"></div>
     <aside>
+      <div class="strip" id="strip"></div>
       <div class="panel" id="coach">
         <div class="panel-head"><h2 id="coach-title">Coach</h2><span class="tag" style="margin-left:auto">Nemotron Super 120B</span></div>
         <div class="panel-body" id="coach-body"></div>
       </div>
       <div class="panel" id="chart-panel">
-        <div class="panel-head"><h2>Learning curve</h2><span class="tag" style="margin-left:auto">best card so far · ● kept ○ discarded</span></div>
+        <div class="panel-head"><h2>Learning curve</h2><span class="tag" style="margin-left:auto">tested card score per round</span></div>
         <div class="panel-body"><canvas id="curve"></canvas></div>
       </div>
     </aside>
@@ -522,7 +529,11 @@
       }
     }
     flash() {
-      for (const node of [this.root, this.mini].filter(Boolean)) { node.classList.remove('flash'); void node.offsetWidth; node.classList.add('flash'); }
+      for (const node of [this.root, this.mini].filter(Boolean)) {
+        node.classList.remove('flash'); void node.offsetWidth; node.classList.add('flash');
+        // Clear it afterwards, or moving the node between focus and strip replays the flash.
+        node.addEventListener('animationend', () => node.classList.remove('flash'), { once: true });
+      }
     }
     stats() {
       const closed = this.threads.filter(t => !t.open);
@@ -562,7 +573,7 @@
     if (idx >= 0) top.append(el('span', 'hint', String(idx + 1)));
     top.append(sw, el('span', 'name', nameOf(room.key)), el('span', 'st'), el('span', 'st-label', 'waiting'));
     const nums = el('div', 'mini-nums');
-    for (const [cls, lbl] of [['latest', 'latest deal'], ['best', 'best so far']]) {
+    for (const [cls, lbl] of [['latest', 'last'], ['best', 'best']]) {
       const box = el('div'); box.append(el('div', `num mono ${cls}`, '—'), el('div', 'lbl', lbl)); nums.append(box);
     }
     b.append(top, nums);
@@ -574,7 +585,7 @@
     const st = room.status();
     b.querySelector('.st').className = 'st ' + st;
     const lbl = b.querySelector('.st-label');
-    lbl.textContent = { live: 'negotiating', deal: 'deal', walk: 'walked away', nodeal: 'no deal', idle: 'waiting' }[st];
+    lbl.textContent = { live: 'live', deal: 'deal', walk: 'walked', nodeal: 'no deal', idle: 'waiting' }[st];
     lbl.className = 'st-label ' + st;
     b.querySelector('.latest').textContent = room.latest ? fmtScore(room.latest.score) : '—';
     b.querySelector('.best').textContent = room.bestScore === null ? '—' : fmtScore(room.bestScore);
@@ -611,7 +622,6 @@
       ctx.save(); ctx.font = '600 13px -apple-system, Segoe UI, Roboto, sans-serif'; ctx.fillStyle = '#2e2e2c'; ctx.textBaseline = 'middle';
       const labels = [];
       chart.data.datasets.forEach((ds, i) => {
-        if (ds.kind !== 'best') return;
         const meta = chart.getDatasetMeta(i);
           const pts = meta.data.filter((p, j) => ds.data[j] !== null && ds.data[j] !== undefined);
         if (pts.length) labels.push({ text: ds.label.split(' ')[0], x: pts[pts.length - 1].x + 8, y: pts[pts.length - 1].y, on: ds.label === nameOf(focused) });
@@ -628,52 +638,43 @@
     plugins: [endLabels],
     options: {
       responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
-      layout: { padding: { right: 78, top: 6 } },
+      layout: { padding: { right: 96, top: 10, bottom: 4 } },
       interaction: { mode: 'index', intersect: false },
       scales: {
         x: { title: { display: true, text: 'training round', color: '#55554f', font: { size: 13 } }, grid: { display: false }, ticks: { color: '#2e2e2c', font: { size: 14 } }, border: { color: '#b4b4ae' } },
         y: { min: 0, max: 100, ticks: { stepSize: 25, color: '#2e2e2c', font: { size: 14 } }, grid: { color: '#dadad6' }, border: { display: false } }
       },
       plugins: {
-        legend: { position: 'bottom', labels: { color: '#2e2e2c', boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: 'circle', font: { size: 13 }, padding: 14, filter: item => chart.data.datasets[item.datasetIndex].kind === 'best' } },
-        tooltip: { backgroundColor: '#ffffff', borderColor: '#b4b4ae', borderWidth: 1, titleColor: '#111111', bodyColor: '#2e2e2c', callbacks: { title: items => `Round ${items[0].label}`, label: item => {
-          const ds = item.dataset;
-          if (ds.kind === 'best') return ` ${ds.label} best so far: ${fmtScore(item.parsed.y)}`;
-          const kept = ds.pointBackgroundColor[item.dataIndex] !== '#ffffff';
-          return ` ${ds.label} candidate: ${fmtScore(item.parsed.y)} (${kept ? 'kept' : 'discarded'})`;
-        } } }
+        legend: { position: 'bottom', labels: { color: '#2e2e2c', boxWidth: 10, boxHeight: 10, usePointStyle: true, pointStyle: 'circle', font: { size: 13 }, padding: 12 } },
+        tooltip: { backgroundColor: '#ffffff', borderColor: '#b4b4ae', borderWidth: 1, titleColor: '#111111', bodyColor: '#2e2e2c', callbacks: { title: items => `Round ${items[0].label}`, label: item => ` ${item.dataset.label}: ${fmtScore(item.parsed.y)}` } }
       }
     }
   });
   function ensureSeries(key) {
     if (curve.data[key]) return curve.data[key];
     const color = COLORS[key] || '#555';
-    // Main line: best score so far (never goes down, §8.1: a card is kept only if it wins).
-    const line = { kind: 'best', label: nameOf(key), data: [], borderColor: color, backgroundColor: color, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 0, tension: 0, spanGaps: true };
-    // Dots: each round's tested candidate; filled if kept (or the baseline), hollow if discarded.
-    const dots = { kind: 'candidate', label: nameOf(key), data: [], showLine: false, borderColor: color, pointBorderColor: color, pointBackgroundColor: [], pointRadius: 5, pointHoverRadius: 7, pointBorderWidth: 2 };
-    curve.data[key] = { line, dots, color };
+    // One line per supplier through each round's tested score, small solid points on it.
+    const line = { kind: 'tested', label: nameOf(key), data: [], borderColor: color, backgroundColor: color, pointBackgroundColor: color, pointBorderColor: color, borderWidth: 2.5, pointRadius: 3.5, pointHoverRadius: 6, tension: 0, spanGaps: true };
+    curve.data[key] = { line, color, best: [] };
     const keys = order.filter(k => curve.data[k]).concat(Object.keys(curve.data).filter(k => !order.includes(k)));
-    chart.data.datasets = keys.flatMap(k => [curve.data[k].line, curve.data[k].dots]);
+    chart.data.datasets = keys.map(k => curve.data[k].line);
     return curve.data[key];
   }
   function setRounds(n) {
     curve.rounds = Math.max(curve.rounds, n || 0);
     chart.data.labels = Array.from({ length: curve.rounds }, (_, i) => String(i + 1));
-    for (const s of Object.values(curve.data)) for (const ds of [s.line, s.dots]) while (ds.data.length < curve.rounds) ds.data.push(null);
+    for (const s of Object.values(curve.data)) while (s.line.data.length < curve.rounds) s.line.data.push(null);
   }
   function plot(key, round, score, best, result) {
-    setRounds(round);
     const s = ensureSeries(key);
     setRounds(round);
-    s.line.data[round - 1] = (best === null || best === undefined) ? score : best;
-    s.dots.data[round - 1] = score;
-    s.dots.pointBackgroundColor[round - 1] = result === 'discarded' ? '#ffffff' : s.color;
+    s.line.data[round - 1] = score;
+    s.best[round - 1] = (best === null || best === undefined) ? score : best;  // room header and compact card
     highlightCurve();
     const room = rooms[key];
     if (room) {
-      room.setRoundScores(s.line.data.filter(v => v !== null && v !== undefined));  // best so far per round
-      room.bestScore = s.line.data[round - 1];
+      room.setRoundScores(s.best.filter(v => v !== null && v !== undefined));
+      room.bestScore = s.best[round - 1];
       room.changed();
     }
   }
@@ -685,11 +686,11 @@
     // The focused supplier's line is full strength; the others fade back.
     for (const [key, s] of Object.entries(curve.data)) {
       const on = key === focused;
-      s.line.borderColor = on ? s.color : fade(s.color, 0.22);
-      s.line.borderWidth = on ? 3.5 : 2;
-      s.dots.borderColor = s.dots.pointBorderColor = on ? s.color : fade(s.color, 0.3);
-      s.dots.pointBackgroundColor = s.dots.pointBackgroundColor.map(c => c === '#ffffff' ? c : (on ? s.color : fade(s.color, 0.3)));
-      s.dots.pointRadius = on ? 6 : 4;
+      const c = on ? s.color : fade(s.color, 0.25);
+      s.line.borderColor = s.line.pointBackgroundColor = s.line.pointBorderColor = c;
+      s.line.borderWidth = on ? 4 : 2;
+      s.line.pointRadius = on ? 4.5 : 3;
+      s.line.order = on ? 0 : 1;  // focused line drawn on top
     }
     chart.update();
   }
