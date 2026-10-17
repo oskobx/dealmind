@@ -10,6 +10,10 @@ time, keeping a change only if it measurably wins. Over a training run the team 
 each supplier actually behaves, and the general lessons carry over to a supplier nobody on
 the team has ever met.
 
+![DealMind results: learning curve per supplier and the Ridgeline held-out test](docs/results.png)
+
+*Left: each specialist's best card score climbs over five training rounds (dashed: the card tested that round). Right: on a supplier nobody had met, the specialist briefed from the shared playbook scored 82.5 against 67.9 for a blank one. Regenerate with `uv run scripts/make_chart.py`.*
+
 Built in one day at the Crusoe x Cerebral Valley **Recursive Agents** hackathon,
 Saturday October 17, 2026. Tracks: Shared Brain + Version N+1. Everything in this repo was
 written that day; the full design is in [docs/SPEC.md](docs/SPEC.md).
