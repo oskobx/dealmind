@@ -630,21 +630,50 @@ Three minutes:
 | 2:00–2:40 | Ridgeline: blank vs informed specialist. The informed one wins. |
 | 2:40–3:00 | The moat: supplier knowledge compounds; competitors can't copy it. |
 
-**Format:** terminal UI with Python's `rich` (Live layout). Not Streamlit, and not a
-dashboard as the main feature: the agents are the product.
+**Format (changed Oct 17, replaces the `rich` terminal UI):** a single dark web page,
+`web/index.html` (vanilla JS, no build step; Chart.js and marked.js bundled under
+`web/vendor/` so it works offline), served by `server.py` (FastAPI + uvicorn). The page
+streams a run's `events.jsonl` over Server-Sent Events (`GET /events?run=<id>&speed=N`)
+and renders the agents at work. Not Streamlit, and not a dashboard as the main feature:
+the page reads as four negotiations happening, with the coach commenting between rounds.
+Large fonts for a projector; `1`/`2`/`3` switch scenes, space pauses the stream.
 
-Layout:
-- Header: `DealMind · Round 3/5 · Crusoe Managed Inference · Nemotron`
-- Four panels (one per supplier): current deal (product, qty, target), last 2–3 messages
-  (shortened), current offer, outcome, score. Walk-away shown in red.
-- Bottom: score table per supplier per round (with a small trend like `41 → 58 → 72`),
-  plus the coach's latest one-line decision.
+Scenes:
+- **Negotiations** (default): header `DealMind · Round 3/5 · Crusoe Managed Inference ·
+  Nemotron · Qwen`, a model-activity ticker (last call: model, role, latency; retries in
+  amber) and LIVE / REPLAY ×N. Four rooms, one per supplier, each a chat thread:
+  negotiator on the left, supplier on the right, every message with offer chips (price ·
+  quality · days), the negotiator's observed tone label, and `⚡ escalated to Super` when
+  `served_by` names Super. Room header: the supplier's current card (the knob that changed
+  since the last round in amber), the mean-score trend `0.0 → 77.3 → 62.3`, and one tab per
+  deal of the last two rounds (two deals per round run concurrently; the room shows the
+  thread that last moved). A finished deal gets a badge: `DEAL price · quality · days · score`
+  in green, `WALKED AWAY · 0` in red with the whole room flashing red, `NO DEAL · 0` in grey.
+  The negotiator's report observations appear under the badge. Right column: the coach panel
+  (per supplier and round: tried change, score before → after, KEPT / DISCARDED / BASELINE,
+  next experiment and the coach's why; general-tactics rewrites) and the learning curve
+  (mean deal score per supplier per round).
+- **Playbook**: round 1 on the left, a slider picks the round on the right (versions from
+  `runs/<run_id>/playbook/round_NN.md`, rendered as markdown; refreshed after each round).
+- **Ridgeline test**: blank specialist vs informed specialist side by side, each with its
+  card, briefing, the three deal threads and its mean; the banner shows the difference and
+  who won. Driven by `ridgeline_draft` (card, briefing, why) and negotiations with
+  `supplier="ridgeline"`; the arm is `arm` on the events when present, otherwise the card
+  (default card = blank). A `ridgeline_result` event with `blank_mean` / `informed_mean`
+  overrides the computed means. The page switches to this scene when Ridgeline starts.
+
+Events have no negotiation id, so the page attributes turns to threads by (supplier, round,
+order of arrival) and matches `negotiation_end` by the final offer; an explicit id on the
+events would make that exact.
 
 **Safety net:**
 - Every run writes `runs/<run_id>/events.jsonl` (one event per message, decision,
   score, coach update).
-- `replay.py <run_id> --speed 3` replays a saved run in the same UI. If the API is slow
-  on stage, replay the saved run.
+- Live: `uv run server.py --run <run_id>` follows the file as `run.py` writes it (burst of
+  everything so far, then live; reconnects resume from the last event id).
+- `uv run replay.py <run_id> --speed 3` serves a saved run with its recorded timing, 3×
+  faster, pauses capped at `--max-gap` 5 s, and opens the browser. If the API is slow on
+  stage, replay the saved run.
 - Record the saved run for the required 1-minute submission video.
 
 ---

@@ -177,10 +177,18 @@ Target times are for Sat Oct 17. Submissions close at 17:00.
 - Blank vs informed arm on the same 3 seeded deals (§10). Print both means.
 - **Checkpoint:** informed arm beats blank arm.
 
-### Step 6: rich UI + replay (target: 16:20)
-- `ui.py` layout from §11; `run.py` uses it by default (`--plain` to disable).
-- `replay.py` reads `events.jsonl` and drives the same UI at `--speed N`.
-- **Checkpoint:** a full 5-round run looks good live; replay of that run works.
+### Step 6: web UI + replay (done 15:00; replaces the `rich` terminal UI)
+- `web/index.html` (vanilla JS, Chart.js + marked.js bundled in `web/vendor/`, offline)
+  and `server.py` (FastAPI + uvicorn; added with `uv add fastapi uvicorn`). The page
+  streams `runs/<run_id>/events.jsonl` over Server-Sent Events and renders four supplier
+  negotiation rooms as chat threads, the coach's decisions, a learning curve, the playbook
+  with a round slider, and the Ridgeline blank-vs-informed panel. Layout and the events it
+  reads are in SPEC §11. Dark theme, large fonts; keys `1`/`2`/`3` switch scenes, space pauses.
+- Live: start `uv run server.py --run <run_id>` (follows the file while `run.py` writes it;
+  `run.py` keeps printing plain lines). Replay: `uv run replay.py <run_id> --speed 3`.
+- Only `server.py`, `replay.py` and `web/` belong to this step; the core modules are untouched.
+- **Checkpoint:** `uv run replay.py step4-check2 --speed 3` plays the 3-round check run;
+  a live run looks good on the page as it happens.
 
 ### Step 7: demo assets (target: 16:45)
 - Commit the best full run under `runs/demo/`.

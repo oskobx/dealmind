@@ -360,7 +360,7 @@
       t.turns.push(turn);
       const m = el('div', 'msg neg');
       const who = el('div', 'who'); who.append(el('b', null, 'Negotiator'), el('span', null, `round ${ev.round}`));
-      if (ev.served_by && /super/i.test(ev.served_by)) who.append(el('span', 'tag escalated', '⚡ Super'));
+      if (ev.served_by && /super/i.test(ev.served_by)) who.append(el('span', 'tag escalated', '⚡ escalated to Super'));
       turn.toneSlot = el('span'); who.append(turn.toneSlot);
       m.append(who);
       m.append(el('div', 'bubble', ev.message || (ev.action === 'accept' ? 'We accept your offer.' : '')));
