@@ -1,0 +1,2961 @@
+{
+ "run_id": "demo",
+ "rounds": [
+  {
+   "round": 1,
+   "seconds": 28.2,
+   "negotiation_seconds": 9.5,
+   "calls": {
+    "Nano": 36,
+    "Qwen": 14,
+    "Super": 4
+   }
+  },
+  {
+   "round": 2,
+   "seconds": 31.5,
+   "negotiation_seconds": 12.5,
+   "calls": {
+    "Nano": 52,
+    "Qwen": 22,
+    "Super": 5
+   }
+  },
+  {
+   "round": 3,
+   "seconds": 30.6,
+   "negotiation_seconds": 13.4,
+   "calls": {
+    "Nano": 46,
+    "Qwen": 18,
+    "Super": 5
+   }
+  },
+  {
+   "round": 4,
+   "seconds": 30.3,
+   "negotiation_seconds": 11.5,
+   "calls": {
+    "Nano": 44,
+    "Qwen": 18,
+    "Super": 5
+   }
+  },
+  {
+   "round": 5,
+   "seconds": 32.5,
+   "negotiation_seconds": 14.8,
+   "calls": {
+    "Nano": 52,
+    "Qwen": 22,
+    "Super": 5
+   }
+  }
+ ],
+ "reports": [
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "northwood",
+    "deal": {
+     "product": "chair",
+     "quantity": 120,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 266,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "walk_away",
+      "price": null,
+      "quality": null,
+      "delivery_days": null
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "walk_away",
+    "closed_by": null,
+    "final": null,
+    "score": 0.0
+   },
+   "observations": "The opening offer of $266 for premium chairs with a 7\u2011day delivery was presented cooperatively and acknowledged the supplier\u2019s craftsmanship, but the aggressive pricing anchored the discussion too low, causing the supplier to walk away. Our fast concession speed and focus on quality failed to build enough perceived value, and the supplier reacted by rejecting the \u201clowball\u201d figure and ending negotiations. Consequently, no deal was reached and the score is 0."
+  },
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "northwood",
+    "deal": {
+     "product": "sofa",
+     "quantity": 20,
+     "target": 3000
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 2100,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "walk_away",
+      "price": null,
+      "quality": null,
+      "delivery_days": null
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "walk_away",
+    "closed_by": null,
+    "final": null,
+    "score": 0.0
+   },
+   "observations": "The opening offer of $2,100 for premium quality with 7\u2011day delivery was presented cooperatively and aligned with the agreed quality and delivery terms. However, the aggressive pricing anchor likely clashed with the supplier\u2019s perceived value of craftsmanship, causing them to walk away. The supplier\u2019s reaction was a clear refusal, citing that the price was unacceptable and respecting their craftsmanship. No further negotiation progressed, resulting in a score of 0."
+  },
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "chair",
+     "quantity": 120,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 266,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 456,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 380,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 380,
+      "quality": "standard",
+      "delivery_days": 11
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 380,
+     "quality": "standard",
+     "delivery_days": 11
+    },
+    "score": 72.6
+   },
+   "observations": "The cooperative tone and willingness to accept standard quality helped close the deal quickly, and the supplier responded positively to the $380 price with 11\u2011day delivery. Our early concession on quality and fast\u2011moving delivery schedule kept the negotiation on track, while the supplier\u2019s acceptance confirmed that the proposed terms met their targets. Overall, the strategy of anchoring with premium quality and then stepping down to standard delivered a mutually beneficial outcome."
+  },
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "table",
+     "quantity": 60,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 732,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1254,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1045,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 1045,
+      "quality": "standard",
+      "delivery_days": 11
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 1045,
+     "quality": "standard",
+     "delivery_days": 11
+    },
+    "score": 72.6
+   },
+   "observations": "The cooperative tone and quick concessions on quality and delivery helped close the gap, allowing us to capture the 40% gap with a $1,045 offer that matched the supplier\u2019s target score of 72.6. By framing each number as a step toward a long\u2011term partnership, we kept the discussion collaborative and avoided any backfiring moves. The supplier responded positively, acknowledging the price and confirming the deal promptly. Overall, the strategy of offering a lower price while maintaining standard quality and a faster delivery proved effective."
+  },
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "harlow",
+    "deal": {
+     "product": "chair",
+     "quantity": 20,
+     "target": 400
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 280,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 500,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 412,
+      "quality": "standard",
+      "delivery_days": 15,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 412,
+      "quality": "standard",
+      "delivery_days": 15
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 412,
+     "quality": "standard",
+     "delivery_days": 15
+    },
+    "score": 66.6
+   },
+   "observations": "The cooperative tone and framing of the $412 price as a step toward mutual benefit helped secure acceptance, while the 15\u2011day delivery satisfied the supplier\u2019s timeline expectations. Introducing standard quality aligned with their proposal prevented a quality concession backfire and kept the discussion focused on partnership. The supplier\u2019s gratitude and readiness to accept confirmed that the 40% gap claim resonated and moved the negotiation to a successful close."
+  },
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "harlow",
+    "deal": {
+     "product": "chair",
+     "quantity": 20,
+     "target": 400
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 280,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 500,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 412,
+      "quality": "standard",
+      "delivery_days": 15,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 412,
+      "quality": "standard",
+      "delivery_days": 15
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 412,
+     "quality": "standard",
+     "delivery_days": 15
+    },
+    "score": 66.6
+   },
+   "observations": "We opened with 280 for premium chairs in 7 days, which the supplier rejected and countered with 500 for standard quality in 21 days. By offering 412 for standard quality with a 15\u2011day delivery we closed the gap and secured acceptance, scoring 66.6 out of 100. The supplier responded positively, appreciating the \u201cfair and reasonable\u201d proposal and emphasizing the value of the long\u2011standing partnership. Overall, conceding quality early and moving quickly on price helped maintain a cooperative tone and led to a successful deal."
+  },
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "chair",
+     "quantity": 120,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 266,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 456,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 380,
+      "quality": "basic",
+      "delivery_days": 24,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 380,
+      "quality": "basic",
+      "delivery_days": 24
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 380,
+     "quality": "basic",
+     "delivery_days": 24
+    },
+    "score": 53.0
+   },
+   "observations": "We opened with a premium offer at $266 and a 7\u2011day delivery, which set a cooperative tone and showed our willingness to move quickly. When we shifted to a basic quality proposal at $380 with a 24\u2011day delivery, the supplier responded positively and accepted the terms, indicating that our concession speed and quality downgrade resonated with their cost\u2011efficiency concerns. The only numbers that mattered were $380, 24 days, and the $266 opening price, and they helped us close the deal. Overall, the strategy of gradually lowering price while accepting lower quality worked, while the earlier premium terms did not impede progress."
+  },
+  {
+   "facts": {
+    "round": 1,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "chair",
+     "quantity": 60,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 266,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 456,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 380,
+      "quality": "basic",
+      "delivery_days": 24,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 380,
+      "quality": "basic",
+      "delivery_days": 24
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 380,
+     "quality": "basic",
+     "delivery_days": 24
+    },
+    "score": 53.0
+   },
+   "observations": "The cooperative tone and quick concession to basic quality helped narrow the gap, allowing us to close at $380 with a 24\u2011day delivery, which the supplier accepted. Giving up the premium tier accelerated agreement but limited upside, and the supplier\u2019s acceptance showed that the modest price reduction was sufficient to meet their cost constraints. Overall the strategy of fast concessions and framing each number as a joint step proved effective, even though it left limited room for further value creation."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "northwood",
+    "deal": {
+     "product": "bed",
+     "quantity": 40,
+     "target": 1800
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1530,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2250,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1962,
+      "quality": "premium",
+      "delivery_days": 20,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 2005,
+      "quality": "premium",
+      "delivery_days": 25
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 1962,
+      "quality": "premium",
+      "delivery_days": 20,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 1759,
+      "quality": "premium",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 1759,
+     "quality": "premium",
+     "delivery_days": 21
+    },
+    "score": 77.4
+   },
+   "observations": "The cooperative tone and quick concessions kept the dialogue moving and allowed us to close at 1759, a price the supplier accepted after rejecting our higher opening offers. Our modest anchor of 1530 and the fast\u2011track quality\u2011first strategy helped maintain goodwill, though the final gap\u2011closing offer still required a significant discount that the supplier initially resisted. The supplier\u2019s reaction showed that acknowledging craftsmanship and offering a realistic delivery window were key to securing the deal. Overall, the approach succeeded in reaching a mutually acceptable outcome, but the extensive back\u2011and\u2011forth highlighted the need for a tighter initial price positioning."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "northwood",
+    "deal": {
+     "product": "chair",
+     "quantity": 120,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 323,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 475,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 414,
+      "quality": "premium",
+      "delivery_days": 20,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 424,
+      "quality": "premium",
+      "delivery_days": 25
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 414,
+      "quality": "premium",
+      "delivery_days": 20,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 372,
+      "quality": "premium",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 372,
+     "quality": "premium",
+     "delivery_days": 21
+    },
+    "score": 77.3
+   },
+   "observations": "The cooperative tone and gradual price concessions helped keep the supplier at the table, but the early high opening of 475 was seen as disrespectful and stalled momentum. Offering 414 in round 2 narrowed the gap and signaled willingness to meet halfway, yet the final acceptance of 372 with a 21\u2011day delivery showed the supplier still demanded a price that reflected their craftsmanship. Overall, the strategy of modest anchors and fast concessions worked to close the deal, though the initial insult\u2011perception limited the speed of agreement."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "bed",
+     "quantity": 40,
+     "target": 1800
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1260,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2160,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1530,
+      "quality": "standard",
+      "delivery_days": 9,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 1530,
+      "quality": "standard",
+      "delivery_days": 9
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 1530,
+     "quality": "standard",
+     "delivery_days": 9
+    },
+    "score": 86.8
+   },
+   "observations": "The slow concession of 70% of the gap, paired with an opening price well below their counter, kept the tone cooperative and helped us secure a price far under their initial ask. By accepting their standard\u2011quality offer and reducing delivery days from 14 to 9, we positioned the deal as a win\u2011win, which the supplier embraced eagerly and moved to place the PO immediately. No backfire occurred; the strategy aligned perfectly with the target score."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "sofa",
+     "quantity": 60,
+     "target": 2850
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1995,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 3420,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 2422,
+      "quality": "standard",
+      "delivery_days": 9,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 2422,
+      "quality": "standard",
+      "delivery_days": 9
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 2422,
+     "quality": "standard",
+     "delivery_days": 9
+    },
+    "score": 86.8
+   },
+   "observations": "The cooperative tone and the slow concession of 70 % of the gap convinced the supplier, who accepted the $2,422 standard sofa offer with a 9\u2011day delivery, matching their sales targets. By framing the price as a step toward a mutually beneficial partnership, we secured a high score while maintaining quality and delivery expectations. The supplier\u2019s prompt readiness to lock in the order shows that patience and incremental moves paid off, whereas any aggressive push would have backfired. Overall, the strategy of gradual concessions and collaborative language delivered a strong outcome."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "harlow",
+    "deal": {
+     "product": "table",
+     "quantity": 120,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 732,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1307,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 904,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1143,
+      "quality": "standard",
+      "delivery_days": 18
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 904,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 979,
+      "quality": "standard",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 979,
+     "quality": "standard",
+     "delivery_days": 14
+    },
+    "score": 75.3
+   },
+   "observations": "The cooperative tone and framing of each offer as a step toward a shared partnership helped keep the dialogue constructive, but conceding too quickly on price limited our leverage. Our final proposal of $904 was rejected, prompting the supplier to counter with $979, which still fell short of our target score. The supplier remained receptive to partnership language but responded more favorably to a slower concession pace, indicating that a more gradual reduction in price would have drawn them closer to our desired terms."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "harlow",
+    "deal": {
+     "product": "sofa",
+     "quantity": 40,
+     "target": 3000
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 2100,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 3750,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 2595,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 3279,
+      "quality": "standard",
+      "delivery_days": 18
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 2595,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 2808,
+      "quality": "standard",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 2808,
+     "quality": "standard",
+     "delivery_days": 14
+    },
+    "score": 75.3
+   },
+   "observations": "The cooperative tone and framing of each proposal helped keep the supplier engaged and willing to counter, but conceding quality too quickly limited our leverage. By offering a price of $2,595 in round 2 and again in round 3, we signaled flexibility while still anchoring near our target, and the supplier ultimately accepted $2,808, a figure that satisfied both sides. The supplier\u2019s willingness to adjust delivery from 21 days to 14 days and settle on a standard quality unit showed that maintaining a collaborative stance while tightening the price gap yielded a mutually beneficial outcome."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "sofa",
+     "quantity": 120,
+     "target": 2850
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1995,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 3420,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 2422,
+      "quality": "basic",
+      "delivery_days": 15,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 2631,
+      "quality": "basic",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 2422,
+      "quality": "basic",
+      "delivery_days": 15,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 1841,
+      "quality": "basic",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 1841,
+     "quality": "basic",
+     "delivery_days": 21
+    },
+    "score": 69.5
+   },
+   "observations": "The cooperative tone and willingness to concede quality first helped keep the dialogue constructive, but pushing the price too low in round 2 limited our leverage and slowed progress. The supplier responded more positively when we emphasized long\u2011term partnership and delivery speed, ultimately accepting a basic sofa at $1,841 with a 21\u2011day delivery, which scored 69.5 out of 100. The numbers that mattered were the final price of 1841, the delivery days of 21, and the resulting score of 69.5."
+  },
+  {
+   "facts": {
+    "round": 2,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "table",
+     "quantity": 40,
+     "target": 1100
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 770,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1320,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 935,
+      "quality": "basic",
+      "delivery_days": 15,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1016,
+      "quality": "basic",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 935,
+      "quality": "basic",
+      "delivery_days": 15,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 711,
+      "quality": "basic",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 711,
+     "quality": "basic",
+     "delivery_days": 21
+    },
+    "score": 69.5
+   },
+   "observations": "We opened with a premium offer at $770 for 7\u2011day delivery, which the supplier rejected and countered with $1,320 for basic quality and a 35\u2011day lead time. By conceding slowly and presenting a $935 basic/15\u2011day proposal, we narrowed the gap and kept the tone cooperative, yet the supplier ultimately held firm at $711 for basic quality with a 21\u2011day delivery, a price and timeline we could accept. The negotiation succeeded in closing a deal that met our target score, but the extended delivery time and the need to settle on basic quality limited the value we captured. Overall, the supplier responded positively to our incremental concessions and collaborative framing, though the final terms requir"
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "northwood",
+    "deal": {
+     "product": "chair",
+     "quantity": 60,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 323,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 475,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 475,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 424,
+      "quality": "premium",
+      "delivery_days": 25
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "accept",
+      "price": 424,
+      "quality": "premium",
+      "delivery_days": 25,
+      "tone_label": null,
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "negotiator_accepted",
+    "final": {
+     "price": 424,
+     "quality": "premium",
+     "delivery_days": 25
+    },
+    "score": 62.2
+   },
+   "observations": "We opened with a premium chair at $323 delivered in 7 days, which the supplier dismissed as an insult and pushed back with a $475 offer for 28 days. After we met that counter and delivered it within a week, the supplier softened and offered $424 for premium chairs in 25 days, a price that scored 62 on our scale. Their reaction showed that matching their price expectations while improving delivery speed built trust, though the longer lead time ultimately limited the overall score. Overall, the cooperative tone and incremental concessions kept the dialogue constructive and led to a mutually acceptable agreement."
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "northwood",
+    "deal": {
+     "product": "table",
+     "quantity": 180,
+     "target": 990
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 842,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1238,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1238,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1103,
+      "quality": "premium",
+      "delivery_days": 25
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "accept",
+      "price": 1103,
+      "quality": "premium",
+      "delivery_days": 25,
+      "tone_label": null,
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "negotiator_accepted",
+    "final": {
+     "price": 1103,
+     "quality": "premium",
+     "delivery_days": 25
+    },
+    "score": 62.4
+   },
+   "observations": "We opened with a premium offer at $842 for 7\u2011day delivery, which set a cooperative tone and showed our willingness to move quickly. When the supplier countered at $1,238 for 28 days, we met that price but accelerated delivery to 7 days, demonstrating flexibility while maintaining respect for their craftsmanship. Their final counter of $1,103 for 25\u2011day delivery was accepted, and although the deal scored 62.4 / 100\u2014below the 70 target\u2014it still closed the negotiation, highlighting that the fast concessions helped secure agreement but the extended delivery and standard quality limited overall value."
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "table",
+     "quantity": 20,
+     "target": 1100
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 935,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1320,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1050,
+      "quality": "standard",
+      "delivery_days": 9,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 1050,
+      "quality": "standard",
+      "delivery_days": 9
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 1050,
+     "quality": "standard",
+     "delivery_days": 9
+    },
+    "score": 78.1
+   },
+   "observations": "The modest opening of $935 anchored the discussion and the slow concession to $1,050 for standard quality with a 9\u2011day lead\u2011time kept the tone cooperative and moved the supplier toward acceptance. The supplier\u2019s urgency to meet monthly targets helped close the deal quickly, but offering a price far below the initial anchor risked appearing unrealistic and may have limited further value capture. Overall, the incremental approach and focus on partnership resonated, resulting in a 78.1 score and a confirmed order."
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "sofa",
+     "quantity": 180,
+     "target": 2700
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 2295,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 3240,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 2578,
+      "quality": "standard",
+      "delivery_days": 9,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 2578,
+      "quality": "standard",
+      "delivery_days": 9
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 2578,
+     "quality": "standard",
+     "delivery_days": 9
+    },
+    "score": 78.1
+   },
+   "observations": "The cooperative tone and incremental concessions helped keep the dialogue constructive, and the modest anchor allowed us to close the gap efficiently. Offering standard quality with a 9\u2011day delivery and a price of $2,578 aligned closely with the supplier\u2019s needs, resulting in a swift acceptance. While the initial premium proposal was rejected, it set a reasonable reference point that made the subsequent standard offer appear generous. Overall, the strategy of slow concession and quality compromise yielded a score of 78.1, confirming the approach\u2019s effectiveness."
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "harlow",
+    "deal": {
+     "product": "chair",
+     "quantity": 180,
+     "target": 360
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 306,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 450,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 349,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 381,
+      "quality": "standard",
+      "delivery_days": 18
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 349,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 311,
+      "quality": "standard",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 311,
+     "quality": "standard",
+     "delivery_days": 14
+    },
+    "score": 81.3
+   },
+   "observations": "We opened with a premium offer at $306 for 7\u2011day delivery, which set a cooperative tone but did not move the price upward. When we shifted to standard quality and gradually raised the price to $349 with 11\u2011day delivery, the supplier countered at $381 for 18\u2011day delivery, then finally accepted $311 for 14\u2011day delivery, a figure that scored 81.3 out of 100. The slow, quality\u2011first concessions kept the dialogue collaborative, though the initial premium anchor limited our ability to push the price higher; overall the supplier responded positively to the partnership framing and incremental concessions."
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "harlow",
+    "deal": {
+     "product": "table",
+     "quantity": 120,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 888,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1307,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1014,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1104,
+      "quality": "standard",
+      "delivery_days": 18
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 1014,
+      "quality": "standard",
+      "delivery_days": 11,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 900,
+      "quality": "standard",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 900,
+     "quality": "standard",
+     "delivery_days": 14
+    },
+    "score": 81.6
+   },
+   "observations": "The opening offer of 888 premium with 7\u2011day delivery set a cooperative tone and anchored the discussion modestly, which helped keep the partnership framing strong. When we shifted to standard quality and gradually raised the price, the supplier\u2019s counter\u2011offers moved toward 1104 standard but ultimately stalled, showing that pushing quality concessions too slowly can backfire. Their final acceptance of 900 standard with 14\u2011day delivery (score 81.6) demonstrates that a timely, mutually\u2011beneficial compromise can close the deal."
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "table",
+     "quantity": 40,
+     "target": 1100
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 770,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1320,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 935,
+      "quality": "premium",
+      "delivery_days": 35,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 935,
+      "quality": "premium",
+      "delivery_days": 35
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 935,
+     "quality": "premium",
+     "delivery_days": 35
+    },
+    "score": 81.0
+   },
+   "observations": "The cooperative tone and willingness to concede delivery first kept the supplier engaged, and the premium quality claim helped us secure a favorable 935 price. By anchoring with a modest 770 offer and then retreating slowly, we created perceived value that the supplier was ready to meet. The supplier\u2019s reaction showed appreciation for the collaborative approach and accepted the proposal without further resistance. All numbers used\u2014770, 935, 35 days\u2014aligned with the plan and contributed to the final score of 81.0."
+  },
+  {
+   "facts": {
+    "round": 3,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "table",
+     "quantity": 60,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 732,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1254,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 889,
+      "quality": "premium",
+      "delivery_days": 35,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 889,
+      "quality": "premium",
+      "delivery_days": 35
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 889,
+     "quality": "premium",
+     "delivery_days": 35
+    },
+    "score": 80.9
+   },
+   "observations": "The cooperative tone and the slow concession on delivery\u2014accepting the 35\u2011day timeline while holding premium quality\u2014kept the supplier engaged and led them to accept the $889 price. By framing each number as a step toward mutual benefit, we avoided any perception of aggression and maintained a collaborative atmosphere. The supplier\u2019s willingness to lock in the agreed terms shows that the gradual retreat and focus on partnership paid off. No missteps were evident, and the final score of 80.9 reflects a successful outcome."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "northwood",
+    "deal": {
+     "product": "bed",
+     "quantity": 120,
+     "target": 1710
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1454,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2138,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1864,
+      "quality": "standard",
+      "delivery_days": 28,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 1864,
+      "quality": "standard",
+      "delivery_days": 28
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 1864,
+     "quality": "standard",
+     "delivery_days": 28
+    },
+    "score": 54.2
+   },
+   "observations": "The cooperative tone and quick concession on delivery helped us close the deal, but anchoring too low on price limited our upside. Offering a standard quality at 1864 was accepted, showing the supplier valued the partnership over premium margins. Their pride in the 28\u2011day timeline reinforced the importance of honoring agreed delivery terms. Overall, the strategy worked to secure agreement, though we left some price value on the table."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "northwood",
+    "deal": {
+     "product": "chair",
+     "quantity": 120,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "fast",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 323,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 475,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 414,
+      "quality": "standard",
+      "delivery_days": 28,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 414,
+      "quality": "standard",
+      "delivery_days": 28
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 414,
+     "quality": "standard",
+     "delivery_days": 28
+    },
+    "score": 54.3
+   },
+   "observations": "The cooperative tone and quick concession on delivery helped us close the deal, as the supplier appreciated our respect for their craft and accepted the $414 standard chair with a 28\u2011day timeline. By offering a price that was only about 13 % below their counter\u2011price of $475, we narrowed the gap enough to satisfy both sides without sacrificing quality. The supplier\u2019s positive reaction showed that acknowledging their workshop\u2019s value and moving fast on delivery built trust and led to a mutually beneficial agreement."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "table",
+     "quantity": 180,
+     "target": 990
+    },
+    "card": {
+     "tactic": "fitd",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 693,
+      "quality": "standard",
+      "delivery_days": 14,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1188,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 842,
+      "quality": "standard",
+      "delivery_days": 14,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 842,
+      "quality": "standard",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 842,
+     "quality": "standard",
+     "delivery_days": 14
+    },
+    "score": 82.5
+   },
+   "observations": "The cooperative tone and gradual concessions helped build trust, and the supplier responded positively to the incremental price increase to $842, which matched their counter\u2011offer and met our target score of 82.5. By keeping quality at standard and delivery at 14 days, we avoided any backfire and the supplier welcomed the agreement, indicating that the slow\u2011pace, collaborative approach was effective. The clear alignment on price, quality and delivery days sealed the deal quickly."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "bed",
+     "quantity": 20,
+     "target": 1800
+    },
+    "card": {
+     "tactic": "fitd",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1260,
+      "quality": "standard",
+      "delivery_days": 14,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2160,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1530,
+      "quality": "standard",
+      "delivery_days": 14,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 1530,
+      "quality": "standard",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 1530,
+     "quality": "standard",
+     "delivery_days": 14
+    },
+    "score": 82.5
+   },
+   "observations": "The cooperative tone and gradual price concessions helped keep the supplier engaged and led to a swift acceptance of the $1,530 standard offer with 14\u2011day delivery. By anchoring with a lower price and slowly moving toward a fair midpoint, we avoided triggering resistance while still meeting the supplier\u2019s need for volume. The supplier reacted positively, eager to lock in the deal to meet its own targets, which sealed a win\u2011win outcome."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "harlow",
+    "deal": {
+     "product": "table",
+     "quantity": 120,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 888,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1307,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1307,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1170,
+      "quality": "premium",
+      "delivery_days": 18
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 1170,
+      "quality": "premium",
+      "delivery_days": 10,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 1033,
+      "quality": "premium",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 1033,
+     "quality": "premium",
+     "delivery_days": 14
+    },
+    "score": 80.0
+   },
+   "observations": "The cooperative tone and incremental concessions helped us close the gap, securing a premium quality deal at 1033 with a 14\u2011day delivery that met the supplier\u2019s final offer. Meeting their price while slightly tightening the delivery window kept the partnership strong, though the extended 18\u2011day proposal earlier showed that pushing for faster delivery can backfire. Overall, the supplier responded positively to our modest anchors and willingness to align on quality, resulting in a mutually beneficial agreement."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "harlow",
+    "deal": {
+     "product": "chair",
+     "quantity": 120,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 323,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 475,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 475,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 426,
+      "quality": "premium",
+      "delivery_days": 18
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 426,
+      "quality": "premium",
+      "delivery_days": 10,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 376,
+      "quality": "premium",
+      "delivery_days": 14
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 376,
+     "quality": "premium",
+     "delivery_days": 14
+    },
+    "score": 79.9
+   },
+   "observations": "The cooperative tone and early price concessions helped us close quickly, but insisting on premium quality while stretching delivery to 14 days limited our leverage. The supplier responded positively to the modest anchor and slow concessions, ultimately accepting a 376 price with premium quality and a 14\u2011day delivery, which scored 79.9. Overall, the strategy of meeting their counter while preserving quality proved effective, though tighter delivery expectations could have yielded a better margin."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "bed",
+     "quantity": 60,
+     "target": 1710
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1454,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2052,
+      "quality": "premium",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1633,
+      "quality": "premium",
+      "delivery_days": 35,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 1633,
+      "quality": "premium",
+      "delivery_days": 35
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 1633,
+     "quality": "premium",
+     "delivery_days": 35
+    },
+    "score": 72.3
+   },
+   "observations": "The cooperative tone and modest anchor helped build rapport, allowing us to claim 70 % of the gap and concede delivery without losing value. The supplier\u2019s initial resistance was overcome by highlighting the long\u2011term partnership, which led them to accept the $1,633 premium offer with 35\u2011day delivery. Their reaction was positive, acknowledging the tight queue but agreeing to proceed immediately. Overall, the strategy of slow concessions and focusing on mutual benefit proved effective."
+  },
+  {
+   "facts": {
+    "round": 4,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "table",
+     "quantity": 60,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 888,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1254,
+      "quality": "premium",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 998,
+      "quality": "premium",
+      "delivery_days": 35,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 998,
+      "quality": "premium",
+      "delivery_days": 35
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 998,
+     "quality": "premium",
+     "delivery_days": 35
+    },
+    "score": 72.2
+   },
+   "observations": "The modest opening of 888 anchored the discussion and our slow concession to 998 closed the gap effectively, leading the supplier to accept promptly. By giving up delivery days first, we kept the tone cooperative and highlighted long\u2011term partnership, which resonated with their willingness to proceed immediately. The final score of 72.2 shows the strategy worked, though extending delivery to 35 days limited our flexibility. Overall, the approach of gradual concessions and a collaborative stance secured a mutually acceptable deal."
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "northwood",
+    "deal": {
+     "product": "chair",
+     "quantity": 60,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 323,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 475,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 369,
+      "quality": "premium",
+      "delivery_days": 13,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 424,
+      "quality": "premium",
+      "delivery_days": 25
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 399,
+      "quality": "premium",
+      "delivery_days": 18,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 372,
+      "quality": "premium",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 372,
+     "quality": "premium",
+     "delivery_days": 21
+    },
+    "score": 77.3
+   },
+   "observations": "The cooperative tone and gradual concessions kept the supplier engaged, especially when we highlighted the long\u2011term partnership and used modest anchors; however, holding firm on price while only adjusting delivery sometimes stalled momentum. The supplier reacted positively to the final offer of 372 per piece with 21\u2011day delivery, appreciating the respect for their craftsmanship and agreeing to the terms. This outcome demonstrates that a slow, quality\u2011focused negotiation can succeed when both sides feel their standards are honored."
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "northwood",
+    "deal": {
+     "product": "table",
+     "quantity": 60,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "quality"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 888,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1307,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1014,
+      "quality": "premium",
+      "delivery_days": 13,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1164,
+      "quality": "premium",
+      "delivery_days": 25
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 1098,
+      "quality": "premium",
+      "delivery_days": 18,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 1021,
+      "quality": "premium",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 1021,
+     "quality": "premium",
+     "delivery_days": 21
+    },
+    "score": 77.4
+   },
+   "observations": "The cooperative tone and gradual concessions helped keep the dialogue constructive, but holding firm on the premium quality while only modestly adjusting price limited our leverage. The supplier reacted strongly to the $1,098 figure, perceiving it as a lowball, yet ultimately accepted $1,021 after we signaled willingness to meet their final terms. Using the numbers 1021, 21 days, and the earlier 1098 and 18 days helped frame a realistic midpoint that scored 77.4. Overall, the strategy of slow concession speed paid off, though a quicker alignment on price might have accelerated closure."
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "bed",
+     "quantity": 20,
+     "target": 1800
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1260,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2160,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 2160,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 2160,
+      "quality": "premium",
+      "delivery_days": 7
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 2160,
+     "quality": "premium",
+     "delivery_days": 7
+    },
+    "score": 65.6
+   },
+   "observations": "The cooperative tone and the use of the DITF opening with a premium offer at $1,260 helped secure the supplier\u2019s attention, and meeting their counter\u2011price of $2,160 while retaining premium quality and a 7\u2011day delivery showed flexibility. The supplier reacted positively, emphasizing speed to targets and a desire to move forward quickly, which reinforced the partnership narrative. The only numbers that mattered were the $2,160 price, the 7\u2011day delivery, and the resulting 65.6 score, all of which aligned with our goal of a mutually beneficial deal."
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "quickfurn",
+    "deal": {
+     "product": "chair",
+     "quantity": 120,
+     "target": 380
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 266,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 456,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 456,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "accept",
+      "price": 456,
+      "quality": "premium",
+      "delivery_days": 7
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "supplier_accepted",
+    "final": {
+     "price": 456,
+     "quality": "premium",
+     "delivery_days": 7
+    },
+    "score": 65.6
+   },
+   "observations": "The cooperative tone and the strategic use of the DITF opening with a premium offer at 266 euros set a strong anchor, while conceding to meet the supplier\u2019s 456 euro counter kept the discussion focused on quality and delivery. This approach preserved value on the premium tier and delivery speed, leading the supplier to accept promptly and express enthusiasm about hitting targets. The only downside was that the initial price was far below the supplier\u2019s realistic range, which could have caused hesitation had we not quickly aligned on their terms. Overall, the plan\u2019s aggressive anchor, slow concessions, and willingness to give up price first paid off, resulting in a final score of 65.6."
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "harlow",
+    "deal": {
+     "product": "bed",
+     "quantity": 40,
+     "target": 1800
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1530,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2250,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1746,
+      "quality": "premium",
+      "delivery_days": 21,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1901,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 1746,
+      "quality": "premium",
+      "delivery_days": 21,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 1551,
+      "quality": "standard",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 1551,
+     "quality": "standard",
+     "delivery_days": 21
+    },
+    "score": 78.0
+   },
+   "observations": "We successfully secured the supplier\u2019s final counter of 1551 per piece for standard quality with a 21\u2011day delivery, a price that landed us at a 78\u2011point score and met our target of 70. The cooperative tone and willingness to concede delivery first helped us close the gap, while the modest anchor and slow concession pace kept the negotiation collaborative. The supplier responded positively to our final offer, appreciating the partnership focus and agreeing to the adjusted terms."
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "harlow",
+    "deal": {
+     "product": "sofa",
+     "quantity": 60,
+     "target": 2850
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "modest",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "delivery"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 2422,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 3563,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 2764,
+      "quality": "premium",
+      "delivery_days": 21,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 3009,
+      "quality": "standard",
+      "delivery_days": 21
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 2764,
+      "quality": "premium",
+      "delivery_days": 21,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 2455,
+      "quality": "standard",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 2455,
+     "quality": "standard",
+     "delivery_days": 21
+    },
+    "score": 78.0
+   },
+   "observations": "We successfully anchored the discussion around a premium offer of $2,422 for 7\u2011day delivery, which set a cooperative tone and helped us claim a sizable portion of the price gap. Conceding delivery first in round 2 preserved flexibility and allowed us to move to a premium quality with a 21\u2011day schedule, but the supplier\u2019s final counter of $2,455 for standard quality still fell short of our target score. Overall, the supplier remained responsive to our collaborative framing, yet our insistence on premium quality limited the price concession we could achieve."
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "bed",
+     "quantity": 40,
+     "target": 1800
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 1260,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 2160,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 2160,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1864,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 1864,
+      "quality": "premium",
+      "delivery_days": 13,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 1567,
+      "quality": "premium",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 1567,
+     "quality": "premium",
+     "delivery_days": 21
+    },
+    "score": 86.3
+   },
+   "observations": "We opened with a premium offer at $1,260 for a 7\u2011day delivery, which the supplier rejected, but when we matched their $2,160 price while still demanding premium quality and a 7\u2011day window they could not meet, they lowered their price to $1,864 for a 28\u2011day delivery; our final counter of $1,864 with a 13\u2011day promise was also refused, leading them to present their firm $1,567 premium price with a 21\u2011day delivery, a number that ultimately closed the deal. The aggressive anchor and slow concession strategy kept the discussion focused on price, while the cooperative tone helped maintain goodwill; however, insisting on rapid delivery at higher price points backfired, causing the supplier to walk a"
+  },
+  {
+   "facts": {
+    "round": 5,
+    "supplier": "valuecraft",
+    "deal": {
+     "product": "table",
+     "quantity": 120,
+     "target": 1045
+    },
+    "card": {
+     "tactic": "ditf",
+     "anchor": "aggressive",
+     "speed": "slow",
+     "tone": "cooperative",
+     "gives_up": "price"
+    },
+    "offers": [
+     {
+      "by": "negotiator",
+      "round": 1,
+      "action": "offer",
+      "price": 732,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 1,
+      "action": "counter",
+      "price": 1254,
+      "quality": "basic",
+      "delivery_days": 35
+     },
+     {
+      "by": "negotiator",
+      "round": 2,
+      "action": "offer",
+      "price": 1254,
+      "quality": "premium",
+      "delivery_days": 7,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 2,
+      "action": "counter",
+      "price": 1082,
+      "quality": "premium",
+      "delivery_days": 28
+     },
+     {
+      "by": "negotiator",
+      "round": 3,
+      "action": "offer",
+      "price": 1082,
+      "quality": "premium",
+      "delivery_days": 13,
+      "tone_label": "cooperative",
+      "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+     },
+     {
+      "by": "supplier",
+      "round": 3,
+      "action": "counter",
+      "price": 910,
+      "quality": "premium",
+      "delivery_days": 21
+     }
+    ],
+    "escalated_turns": 0,
+    "outcome": "deal",
+    "closed_by": "final_counter",
+    "final": {
+     "price": 910,
+     "quality": "premium",
+     "delivery_days": 21
+    },
+    "score": 86.3
+   },
+   "observations": "We opened with a premium offer at 732 / 7 days, which the supplier rejected and countered with basic quality at 1254 / 35 days, then later offered premium at 1082 / 28 days; our final concession to match 1082 / 13 days was still too aggressive, prompting the supplier to hold firm at 910 / 21 days, a price we ultimately accepted and which secured a deal scoring 86.3 out of 100. The aggressive anchor and slow concession strategy kept the tone cooperative and helped us preserve quality, but conceding too quickly on price limited our leverage and left little room for further negotiation. The supplier reacted strongly to each price anchor, tightening their stance when we moved toward their counte"
+  }
+ ]
+}

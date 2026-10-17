@@ -46,7 +46,8 @@ REQUEST_TIMEOUT_SECONDS = 90.0
 # parallel. So every model gets an in-flight cap instead.
 RPM_LIMIT = int(os.environ.get("DEALMIND_RPM", "0"))  # 0 = off
 MAX_INFLIGHT = int(os.environ.get("DEALMIND_MAX_INFLIGHT", "8"))
-MAX_INFLIGHT_PER_MODEL: dict[str, int] = {config.MODEL_LIGHTNING: 2}
+# Super also 429'd ("max_requests_limit") under 4-5 parallel coach calls on Oct 17 at 15:00, so it is capped too.
+MAX_INFLIGHT_PER_MODEL: dict[str, int] = {config.MODEL_LIGHTNING: 2, config.MODEL_SUPER: 2}
 
 
 @dataclass(frozen=True)

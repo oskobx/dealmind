@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import random
 import statistics
+import time
 from dataclasses import dataclass
 
 from dealmind import config, events, llm
@@ -399,7 +400,12 @@ def draft_for_new_supplier(general_tactics: list[str]) -> tuple[Card, str, str, 
         '"why": "one sentence", "briefing": "up to 80 words the negotiator reads before the deal", '
         '"believed_type": "strong" | "weak"}'
     )
-    parsed = _ask(COACH_INTRO + "\nReply with JSON only.", user, COACH_MAX_TOKENS, seed=0)
+    parsed = None
+    for attempt in range(3):  # the draft is one call the whole held-out test depends on; outlast a 429 burst
+        parsed = _ask(COACH_INTRO + "\nReply with JSON only.", user, COACH_MAX_TOKENS, seed=attempt)
+        if parsed:
+            break
+        time.sleep(5)
     card, briefing, believed, why = default_card(), "", config.DEFAULT_BELIEVED_TYPE, "no proposal; default card used"
     if parsed:
         raw_card = parsed.get("card") or {}
