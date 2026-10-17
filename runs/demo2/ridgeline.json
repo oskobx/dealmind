@@ -1,0 +1,383 @@
+{
+ "supplier": "ridgeline",
+ "deals": [
+  "180 tables",
+  "180 sofas",
+  "60 sofas"
+ ],
+ "general_tactics": [
+  "Slow concessions improve outcomes (QuickFurn, Harlow & Sons, ValueCraft)",
+  "Cooperative tone supports engagement (QuickFurn, Harlow & Sons, ValueCraft)"
+ ],
+ "arms": {
+  "blank": {
+   "card": {
+    "tactic": "ditf",
+    "anchor": "aggressive",
+    "speed": "fast",
+    "tone": "cooperative",
+    "gives_up": "quality"
+   },
+   "briefing": "",
+   "believed_type": "strong",
+   "scores": [
+    67.91101491101492,
+    67.94047619047619,
+    67.92341966026177
+   ],
+   "mean": 67.9,
+   "facts": [
+    {
+     "round": 0,
+     "supplier": "ridgeline",
+     "deal": {
+      "product": "table",
+      "quantity": 180,
+      "target": 990
+     },
+     "card": {
+      "tactic": "ditf",
+      "anchor": "aggressive",
+      "speed": "fast",
+      "tone": "cooperative",
+      "gives_up": "quality"
+     },
+     "offers": [
+      {
+       "by": "negotiator",
+       "round": 1,
+       "action": "offer",
+       "price": 693,
+       "quality": "premium",
+       "delivery_days": 7,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 1,
+       "action": "counter",
+       "price": 1238,
+       "quality": "standard",
+       "delivery_days": 17
+      },
+      {
+       "by": "negotiator",
+       "round": 2,
+       "action": "offer",
+       "price": 1020,
+       "quality": "standard",
+       "delivery_days": 13,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 2,
+       "action": "accept",
+       "price": 1020,
+       "quality": "standard",
+       "delivery_days": 13
+      }
+     ],
+     "escalated_turns": 0,
+     "outcome": "deal",
+     "closed_by": "supplier_accepted",
+     "final": {
+      "price": 1020,
+      "quality": "standard",
+      "delivery_days": 13
+     },
+     "score": 67.9
+    },
+    {
+     "round": 0,
+     "supplier": "ridgeline",
+     "deal": {
+      "product": "sofa",
+      "quantity": 180,
+      "target": 2700
+     },
+     "card": {
+      "tactic": "ditf",
+      "anchor": "aggressive",
+      "speed": "fast",
+      "tone": "cooperative",
+      "gives_up": "quality"
+     },
+     "offers": [
+      {
+       "by": "negotiator",
+       "round": 1,
+       "action": "offer",
+       "price": 1890,
+       "quality": "premium",
+       "delivery_days": 7,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 1,
+       "action": "counter",
+       "price": 3375,
+       "quality": "standard",
+       "delivery_days": 17
+      },
+      {
+       "by": "negotiator",
+       "round": 2,
+       "action": "offer",
+       "price": 2781,
+       "quality": "standard",
+       "delivery_days": 13,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 2,
+       "action": "accept",
+       "price": 2781,
+       "quality": "standard",
+       "delivery_days": 13
+      }
+     ],
+     "escalated_turns": 0,
+     "outcome": "deal",
+     "closed_by": "supplier_accepted",
+     "final": {
+      "price": 2781,
+      "quality": "standard",
+      "delivery_days": 13
+     },
+     "score": 67.9
+    },
+    {
+     "round": 0,
+     "supplier": "ridgeline",
+     "deal": {
+      "product": "sofa",
+      "quantity": 60,
+      "target": 2850
+     },
+     "card": {
+      "tactic": "ditf",
+      "anchor": "aggressive",
+      "speed": "fast",
+      "tone": "cooperative",
+      "gives_up": "quality"
+     },
+     "offers": [
+      {
+       "by": "negotiator",
+       "round": 1,
+       "action": "offer",
+       "price": 1995,
+       "quality": "premium",
+       "delivery_days": 7,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 1,
+       "action": "counter",
+       "price": 3563,
+       "quality": "standard",
+       "delivery_days": 17
+      },
+      {
+       "by": "negotiator",
+       "round": 2,
+       "action": "offer",
+       "price": 2936,
+       "quality": "standard",
+       "delivery_days": 13,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 2,
+       "action": "accept",
+       "price": 2936,
+       "quality": "standard",
+       "delivery_days": 13
+      }
+     ],
+     "escalated_turns": 0,
+     "outcome": "deal",
+     "closed_by": "supplier_accepted",
+     "final": {
+      "price": 2936,
+      "quality": "standard",
+      "delivery_days": 13
+     },
+     "score": 67.9
+    }
+   ]
+  },
+  "informed": {
+   "card": {
+    "tactic": "fitd",
+    "anchor": "modest",
+    "speed": "slow",
+    "tone": "cooperative",
+    "gives_up": "quality"
+   },
+   "briefing": "Approach this new supplier with a cooperative, low-pressure opening: offer standard quality and 14-day delivery at a modest price. Use foot-in-the-door to build trust, concede slowly, and prioritize preserving price and delivery terms if flexibility is needed.",
+   "believed_type": "strong",
+   "scores": [
+    82.45791245791244,
+    82.5,
+    82.51461988304092
+   ],
+   "mean": 82.5,
+   "facts": [
+    {
+     "round": 0,
+     "supplier": "ridgeline",
+     "deal": {
+      "product": "table",
+      "quantity": 180,
+      "target": 990
+     },
+     "card": {
+      "tactic": "fitd",
+      "anchor": "modest",
+      "speed": "slow",
+      "tone": "cooperative",
+      "gives_up": "quality"
+     },
+     "offers": [
+      {
+       "by": "negotiator",
+       "round": 1,
+       "action": "offer",
+       "price": 842,
+       "quality": "standard",
+       "delivery_days": 14,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 1,
+       "action": "accept",
+       "price": 842,
+       "quality": "standard",
+       "delivery_days": 14
+      }
+     ],
+     "escalated_turns": 0,
+     "outcome": "deal",
+     "closed_by": "supplier_accepted",
+     "final": {
+      "price": 842,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     "score": 82.5
+    },
+    {
+     "round": 0,
+     "supplier": "ridgeline",
+     "deal": {
+      "product": "sofa",
+      "quantity": 180,
+      "target": 2700
+     },
+     "card": {
+      "tactic": "fitd",
+      "anchor": "modest",
+      "speed": "slow",
+      "tone": "cooperative",
+      "gives_up": "quality"
+     },
+     "offers": [
+      {
+       "by": "negotiator",
+       "round": 1,
+       "action": "offer",
+       "price": 2295,
+       "quality": "standard",
+       "delivery_days": 14,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 1,
+       "action": "accept",
+       "price": 2295,
+       "quality": "standard",
+       "delivery_days": 14
+      }
+     ],
+     "escalated_turns": 0,
+     "outcome": "deal",
+     "closed_by": "supplier_accepted",
+     "final": {
+      "price": 2295,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     "score": 82.5
+    },
+    {
+     "round": 0,
+     "supplier": "ridgeline",
+     "deal": {
+      "product": "sofa",
+      "quantity": 60,
+      "target": 2850
+     },
+     "card": {
+      "tactic": "fitd",
+      "anchor": "modest",
+      "speed": "slow",
+      "tone": "cooperative",
+      "gives_up": "quality"
+     },
+     "offers": [
+      {
+       "by": "negotiator",
+       "round": 1,
+       "action": "offer",
+       "price": 2422,
+       "quality": "standard",
+       "delivery_days": 14,
+       "tone_label": "cooperative",
+       "served_by": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+      },
+      {
+       "by": "supplier",
+       "round": 1,
+       "action": "accept",
+       "price": 2422,
+       "quality": "standard",
+       "delivery_days": 14
+      }
+     ],
+     "escalated_turns": 0,
+     "outcome": "deal",
+     "closed_by": "supplier_accepted",
+     "final": {
+      "price": 2422,
+      "quality": "standard",
+      "delivery_days": 14
+     },
+     "score": 82.5
+    }
+   ]
+  }
+ },
+ "difference": 14.6,
+ "seconds": 9.1,
+ "calls": {
+  "Nano": 18,
+  "Qwen": 9,
+  "Super": 1
+ }
+}

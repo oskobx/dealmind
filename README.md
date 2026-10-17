@@ -20,9 +20,9 @@ Python 3.12 with `uv`. Put a Crusoe Managed Inference key in `.env` as `CRUSOE_A
 
 ```bash
 uv run pytest                                  # 102 tests, no model calls
-uv run run.py --rounds 5 --run-id demo         # training run + Ridgeline test -> runs/demo/
-uv run server.py --run demo                    # web UI, follows the run live as it writes events
-uv run replay.py demo --speed 3                # replay a recorded run in the same UI
+uv run run.py --rounds 5 --run-id demo2        # training run + Ridgeline test -> runs/demo2/
+uv run server.py --run demo2                   # web UI, follows the run live as it writes events
+uv run replay.py demo2 --speed 3               # replay a recorded run in the same UI
 uv run python -m dealmind.negotiation --supplier northwood --calls   # one negotiation, printed
 ```
 
@@ -55,7 +55,7 @@ Everything runs on Crusoe Managed Inference through the OpenAI SDK, with per-mod
 in-flight caps and jittered backoff; every event goes to `runs/<run_id>/events.jsonl`,
 which the web UI and the replay read.
 
-## The demo run (`runs/demo`)
+## The demo run (`runs/demo2`)
 
 Five rounds, four suppliers, two deals per supplier per round. Deal score is 0 to 100,
 hitting every target is 70, no deal is 0.
@@ -64,12 +64,14 @@ hitting every target is 70, no deal is 0.
 |---|---|---|---|
 | Northwood Timber | 0.0 (walked away) | 77.3 | ditf, modest, fast, cooperative, gives up quality |
 | QuickFurn | 72.6 | 86.8 | ditf, aggressive, slow, cooperative, gives up quality |
-| Harlow & Sons | 66.6 | 81.4 | ditf, modest, slow, cooperative, gives up quality |
+| Harlow & Sons | 66.6 | 82.5 | fitd, modest, slow, cooperative, gives up quality |
 | ValueCraft | 53.0 | 86.3 | ditf, aggressive, slow, cooperative, gives up price |
 
-Ridgeline, never seen in training: **informed 71.1 vs blank 67.9** on the same three deals.
-The general tactic the team learned on its own: slow concession speed in round 2 improves
-the score, confirmed on QuickFurn, Harlow and ValueCraft.
+Ridgeline, never seen in training: **informed 82.5 vs blank 67.9** on the same three deals.
+The coach drafted the informed specialist's card from the two tactics the team learned on
+its own, slow concessions and a cooperative tone, each confirmed on QuickFurn, Harlow and
+ValueCraft. Across three full runs, the informed specialist beat the blank one every time
+(+14.6, +14.6, +3.2).
 
 ## Switchyard
 

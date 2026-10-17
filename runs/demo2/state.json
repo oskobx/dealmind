@@ -1,0 +1,404 @@
+{
+  "run_id": "demo2",
+  "round": 5,
+  "suppliers": {
+    "northwood": {
+      "key": "northwood",
+      "name": "Northwood Timber",
+      "candidate": {
+        "tactic": "fitd",
+        "anchor": "modest",
+        "speed": "fast",
+        "tone": "cooperative",
+        "gives_up": "quality"
+      },
+      "best": {
+        "tactic": "ditf",
+        "anchor": "modest",
+        "speed": "fast",
+        "tone": "cooperative",
+        "gives_up": "quality"
+      },
+      "best_score": 77.3,
+      "best_round": 2,
+      "briefing": "Open with a reasonable, standard package (standard quality, 14-day delivery) to build trust, then gradually introduce premium terms. Keep tone cooperative and concessions slow, yielding on quality first to signal respect before adjusting price.",
+      "dossier": [
+        "Northwood Timber walks away from openings at 70% of target price.",
+        "They perceive aggressive pricing as an insult to their craftsmanship.",
+        "Cooperative tone alone is insufficient to overcome lowball offers.",
+        "They hold firm on value and do not concede quickly.",
+        "They reward respect for quality and punish undervaluation.",
+        "Floor price is likely above 70% of target; modest anchor (85%) elicits engagement.",
+        "They are strong negotiators who resist perceived unfairness.",
+        "Deals closed at 98% of target with premium quality and 21-day delivery.",
+        "No concession on quality or delivery was made in round 2; price was the only flex point.",
+        "Conceding price first led to overpayment; conceding delivery may yield better balance."
+      ],
+      "believed_type": "strong",
+      "tried": {
+        "ditf,aggressive,fast,cooperative,quality": 0.0,
+        "ditf,modest,fast,cooperative,quality": 77.3,
+        "ditf,modest,fast,cooperative,price": 62.3,
+        "ditf,modest,fast,cooperative,delivery": 54.2,
+        "ditf,modest,slow,cooperative,quality": 77.3
+      },
+      "scores": [
+        0.0,
+        77.3,
+        62.3,
+        54.2,
+        77.3
+      ],
+      "failed": [
+        "gives_up quality \u2192 price (round 3: 62.3 vs best 77.3)",
+        "gives_up quality \u2192 delivery (round 4: 54.2 vs best 77.3)",
+        "speed fast \u2192 slow (round 5: 77.3 vs best 77.3)"
+      ],
+      "last_why": "Switching to fitd may reduce initial sticker shock while preserving cooperative tone and slow concessions, testing if a softer opening improves engagement without sacrificing gains."
+    },
+    "quickfurn": {
+      "key": "quickfurn",
+      "name": "QuickFurn",
+      "candidate": {
+        "tactic": "ditf",
+        "anchor": "modest",
+        "speed": "slow",
+        "tone": "cooperative",
+        "gives_up": "quality"
+      },
+      "best": {
+        "tactic": "ditf",
+        "anchor": "aggressive",
+        "speed": "slow",
+        "tone": "cooperative",
+        "gives_up": "quality"
+      },
+      "best_score": 86.8,
+      "best_round": 2,
+      "briefing": "Open with a modest anchor (85% of target price) using fitd tactic, slow concessions, cooperative tone, and concede quality first. This builds trust while leaving room to improve price in round 2 without risking walk-away.",
+      "dossier": [
+        "QuickFurn accepts round-2 offers at target price when quality is conceded first.",
+        "They value fast delivery and readily accept 11-day delivery.",
+        "Cooperative tone keeps them engaged and willing to deal.",
+        "They do not walk away from aggressive openings (70% of target).",
+        "They concede little in round 1, expecting significant movement in round 2.",
+        "Likely floor is near target price if we do not push lower in round 2.",
+        "They reward speed and cooperation with quick acceptance.",
+        "Best outcomes come from hitting target price with improved delivery.",
+        "We may be leaving money on the table by not extracting concessions below target.",
+        "Accepting at 85% of target in round 2 suggests room to improve price."
+      ],
+      "believed_type": "weak",
+      "tried": {
+        "ditf,aggressive,fast,cooperative,quality": 72.6,
+        "ditf,aggressive,slow,cooperative,quality": 86.8,
+        "ditf,aggressive,slow,cooperative,price": 65.6,
+        "ditf,aggressive,slow,cooperative,delivery": 85.0,
+        "fitd,aggressive,slow,cooperative,quality": 82.5
+      },
+      "scores": [
+        72.6,
+        86.8,
+        65.6,
+        85.0,
+        82.5
+      ],
+      "failed": [
+        "gives_up quality \u2192 price (round 3: 65.6 vs best 86.8)",
+        "gives_up quality \u2192 delivery (round 4: 85.0 vs best 86.8)",
+        "tactic ditf \u2192 fitd (round 5: 82.5 vs best 86.8)"
+      ],
+      "last_why": "Switching to modest anchor may improve price extraction without triggering walk-away, as aggressive openings are accepted but leave money on the table."
+    },
+    "harlow": {
+      "key": "harlow",
+      "name": "Harlow & Sons",
+      "candidate": {
+        "tactic": "ditf",
+        "anchor": "modest",
+        "speed": "slow",
+        "tone": "cooperative",
+        "gives_up": "quality"
+      },
+      "best": {
+        "tactic": "fitd",
+        "anchor": "modest",
+        "speed": "slow",
+        "tone": "cooperative",
+        "gives_up": "quality"
+      },
+      "best_score": 82.5,
+      "best_round": 5,
+      "briefing": "For the next deal, use a door-in-the-face tactic: start with a premium package (higher price, 7-day delivery), then retreat to your target. Keep tone cooperative, anchor modest, speed slow, and hold on quality first. This tests whether a stronger opening extracts more value without triggering walk-away.",
+      "dossier": [
+        "Harlow & Sons accepts round-1 offers immediately at 85% of target price with standard quality and 14-day delivery.",
+        "They respond well to cooperative tone, moving significantly toward our position after high initial counters.",
+        "They accept standard quality and are flexible on delivery when price is right.",
+        "Their opening counters are high (e.g., 475 for chairs, 1307 for tables), showing strong initial asks.",
+        "They reward cooperative tone and incremental progress with movement toward our offer.",
+        "They punish perceived inflexibility or overly aggressive openings (none observed yet).",
+        "They concede price relatively easily when engaged constructively and not rushed.",
+        "Likely floor is near 330\u2013350 for chairs and 820\u2013880 for tables if we hold firm and concede slowly.",
+        "Conceding quality too early limited leverage; holding quality may yield better margins.",
+        "Slow concessions and cooperative framing have proven effective in closing deals."
+      ],
+      "believed_type": "weak",
+      "tried": {
+        "ditf,aggressive,fast,cooperative,quality": 66.6,
+        "ditf,aggressive,slow,cooperative,quality": 75.3,
+        "ditf,aggressive,slow,cooperative,price": 71.3,
+        "fitd,aggressive,slow,cooperative,quality": 80.2,
+        "fitd,modest,slow,cooperative,quality": 82.5
+      },
+      "scores": [
+        66.6,
+        75.3,
+        71.3,
+        80.2,
+        82.5
+      ],
+      "failed": [
+        "gives_up quality \u2192 price (round 3: 71.3 vs best 75.3)"
+      ],
+      "last_why": "Testing a more aggressive opening (door-in-the-face) to see if we can extract higher initial value without breaking engagement, given their responsiveness to cooperative tone."
+    },
+    "valuecraft": {
+      "key": "valuecraft",
+      "name": "ValueCraft",
+      "candidate": {
+        "tactic": "fitd",
+        "anchor": "aggressive",
+        "speed": "slow",
+        "tone": "cooperative",
+        "gives_up": "price"
+      },
+      "best": {
+        "tactic": "ditf",
+        "anchor": "aggressive",
+        "speed": "slow",
+        "tone": "cooperative",
+        "gives_up": "price"
+      },
+      "best_score": 86.3,
+      "best_round": 5,
+      "briefing": "Start with a reasonable offer (standard +14 days) to build trust, then gradually ask for better terms. Keep tone cooperative and concessions slow to maintain collaboration while improving price, quality, or delivery.",
+      "dossier": [
+        "ValueCraft accepts round-2 offers without hesitation when price is near target",
+        "They countered with high price (456) and long delivery (35d) initially",
+        "They accepted basic quality and 24-day delivery when offered",
+        "They respond well to cooperative tone and clear concessions",
+        "They likely have a firm floor near 380 but may accept slightly less",
+        "Fast concessions led to immediate acceptance at target, suggesting missed savings",
+        "They do not walk away from aggressive opens (266/premium/7d)",
+        "Price flexibility exists, but we gave up quality too fast in round 1",
+        "Slowing concessions may extract better price without breaking deal",
+        "They prioritize delivery and quality terms when price is fixed"
+      ],
+      "believed_type": "weak",
+      "tried": {
+        "ditf,aggressive,fast,cooperative,quality": 53.0,
+        "ditf,aggressive,slow,cooperative,quality": 69.5,
+        "ditf,aggressive,slow,cooperative,delivery": 81.0,
+        "ditf,modest,slow,cooperative,delivery": 72.2,
+        "ditf,aggressive,slow,cooperative,price": 86.3
+      },
+      "scores": [
+        53.0,
+        69.5,
+        81.0,
+        72.2,
+        86.3
+      ],
+      "failed": [
+        "anchor aggressive \u2192 modest (round 4: 72.2 vs best 81.0)"
+      ],
+      "last_why": "Testing fitd may improve early concession efficiency by starting with an acceptable offer and building value, potentially reducing reliance on slow concessions that left delivery terms unmet."
+    }
+  },
+  "general_tactics": [
+    "Slow concessions improve outcomes (QuickFurn, Harlow & Sons, ValueCraft)",
+    "Cooperative tone supports engagement (QuickFurn, Harlow & Sons, ValueCraft)"
+  ],
+  "experiments": [
+    {
+      "round": 1,
+      "supplier": "northwood",
+      "change": "baseline (default card)",
+      "before": null,
+      "after": 0.0,
+      "escalated_turns": 0,
+      "result": "baseline"
+    },
+    {
+      "round": 1,
+      "supplier": "quickfurn",
+      "change": "baseline (default card)",
+      "before": null,
+      "after": 72.6,
+      "escalated_turns": 0,
+      "result": "baseline"
+    },
+    {
+      "round": 1,
+      "supplier": "harlow",
+      "change": "baseline (default card)",
+      "before": null,
+      "after": 66.6,
+      "escalated_turns": 0,
+      "result": "baseline"
+    },
+    {
+      "round": 1,
+      "supplier": "valuecraft",
+      "change": "baseline (default card)",
+      "before": null,
+      "after": 53.0,
+      "escalated_turns": 0,
+      "result": "baseline"
+    },
+    {
+      "round": 2,
+      "supplier": "northwood",
+      "change": "anchor aggressive \u2192 modest",
+      "before": 0.0,
+      "after": 77.3,
+      "escalated_turns": 0,
+      "result": "kept"
+    },
+    {
+      "round": 2,
+      "supplier": "quickfurn",
+      "change": "speed fast \u2192 slow",
+      "before": 72.6,
+      "after": 86.8,
+      "escalated_turns": 0,
+      "result": "kept"
+    },
+    {
+      "round": 2,
+      "supplier": "harlow",
+      "change": "speed fast \u2192 slow",
+      "before": 66.6,
+      "after": 75.3,
+      "escalated_turns": 0,
+      "result": "kept"
+    },
+    {
+      "round": 2,
+      "supplier": "valuecraft",
+      "change": "speed fast \u2192 slow",
+      "before": 53.0,
+      "after": 69.5,
+      "escalated_turns": 0,
+      "result": "kept"
+    },
+    {
+      "round": 3,
+      "supplier": "northwood",
+      "change": "gives_up quality \u2192 price",
+      "before": 77.3,
+      "after": 62.3,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 3,
+      "supplier": "quickfurn",
+      "change": "gives_up quality \u2192 price",
+      "before": 86.8,
+      "after": 65.6,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 3,
+      "supplier": "harlow",
+      "change": "gives_up quality \u2192 price",
+      "before": 75.3,
+      "after": 71.3,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 3,
+      "supplier": "valuecraft",
+      "change": "gives_up quality \u2192 delivery",
+      "before": 69.5,
+      "after": 81.0,
+      "escalated_turns": 0,
+      "result": "kept"
+    },
+    {
+      "round": 4,
+      "supplier": "northwood",
+      "change": "gives_up quality \u2192 delivery",
+      "before": 77.3,
+      "after": 54.2,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 4,
+      "supplier": "quickfurn",
+      "change": "gives_up quality \u2192 delivery",
+      "before": 86.8,
+      "after": 85.0,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 4,
+      "supplier": "harlow",
+      "change": "tactic ditf \u2192 fitd",
+      "before": 75.3,
+      "after": 80.2,
+      "escalated_turns": 0,
+      "result": "kept"
+    },
+    {
+      "round": 4,
+      "supplier": "valuecraft",
+      "change": "anchor aggressive \u2192 modest",
+      "before": 81.0,
+      "after": 72.2,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 5,
+      "supplier": "northwood",
+      "change": "speed fast \u2192 slow",
+      "before": 77.3,
+      "after": 77.3,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 5,
+      "supplier": "quickfurn",
+      "change": "tactic ditf \u2192 fitd",
+      "before": 86.8,
+      "after": 82.5,
+      "escalated_turns": 0,
+      "result": "discarded"
+    },
+    {
+      "round": 5,
+      "supplier": "harlow",
+      "change": "anchor aggressive \u2192 modest",
+      "before": 80.2,
+      "after": 82.5,
+      "escalated_turns": 0,
+      "result": "kept"
+    },
+    {
+      "round": 5,
+      "supplier": "valuecraft",
+      "change": "gives_up delivery \u2192 price",
+      "before": 81.0,
+      "after": 86.3,
+      "escalated_turns": 0,
+      "result": "kept"
+    }
+  ]
+}

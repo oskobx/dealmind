@@ -13,3 +13,4 @@ wheels/
 # Run folders: commit the demo run only
 runs/*
 !runs/demo/
+!runs/demo2/

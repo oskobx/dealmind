@@ -4,85 +4,84 @@
 
 ### Northwood Timber
 - Best card: ditf, modest, fast, cooperative, gives_up=quality (score 77.3, round 2)
-- Briefing: Start with a modest, easy-to-accept package (standard quality, 14-day delivery) to build trust, then gradually introduce asks for premium terms. Keep tone cooperative and concessions slow to honor their standards while advancing toward our goals.
+- Briefing: Open with a reasonable, standard package (standard quality, 14-day delivery) to build trust, then gradually introduce premium terms. Keep tone cooperative and concessions slow, yielding on quality first to signal respect before adjusting price.
 - Believed type: strong
 - Learned:
   - Northwood Timber walks away from openings at 70% of target price.
-  - They perceive lowball offers as disrespect to their craftsmanship.
-  - They hold firm on price and do not concede quickly.
-  - They respond negatively to aggressive anchoring regardless of tone or package.
-  - They are likely a strong negotiator with a high reservation price.
-  - They expect pricing closer to market or target value.
-  - They do not engage if the initial offer feels exploitative.
-  - Conceding on quality or delivery early did not matter — they left before round 2.
-  - A higher opening offer is needed to initiate negotiation.
-  - They reward respect for craftsmanship and punish perceived lowballing.
+  - They perceive aggressive pricing as an insult to their craftsmanship.
+  - Cooperative tone alone is insufficient to overcome lowball offers.
+  - They hold firm on value and do not concede quickly.
+  - They reward respect for quality and punish undervaluation.
+  - Floor price is likely above 70% of target; modest anchor (85%) elicits engagement.
+  - They are strong negotiators who resist perceived unfairness.
+  - Deals closed at 98% of target with premium quality and 21-day delivery.
+  - No concession on quality or delivery was made in round 2; price was the only flex point.
+  - Conceding price first led to overpayment; conceding delivery may yield better balance.
 - Failed: gives_up quality → price (round 3: 62.3 vs best 77.3); gives_up quality → delivery (round 4: 54.2 vs best 77.3); speed fast → slow (round 5: 77.3 vs best 77.3)
 - Scores by round: 0.0 → 77.3 → 62.3 → 54.2 → 77.3
 - Next card: fitd, modest, fast, cooperative, gives_up=quality
 
 ### QuickFurn
 - Best card: ditf, aggressive, slow, cooperative, gives_up=quality (score 86.8, round 2)
-- Briefing: Use DITF with aggressive anchor and slow concessions, cooperative tone, and concede delivery first. Hold firm on price and quality to avoid overpaying; their acceptance of faster delivery lets us keep price near target.
+- Briefing: Open with a modest anchor (85% of target price) using fitd tactic, slow concessions, cooperative tone, and concede quality first. This builds trust while leaving room to improve price in round 2 without risking walk-away.
 - Believed type: weak
 - Learned:
-  - QuickFurn accepts offers at target price when delivered by round 2
-  - They concede little in round 1, offering far above target
-  - They respond well to cooperative tone and standard quality
-  - Fast concession speed leads to early agreement at target, leaving value on table
-  - They likely have a firm floor near their initial counter
-  - Premium quality is not required; standard quality is acceptable
-  - Delivery faster than 14 days is acceptable and may be expected
-  - They anchor high but will deal if we meet their target with reasonable terms
-  - Best outcomes occur when we match their target price with improved delivery or quality
-  - They punish overly aggressive anchors by walking away
-- Failed: anchor aggressive → modest (round 3: 78.1 vs best 86.8); tactic ditf → fitd (round 4: 82.5 vs best 86.8); gives_up quality → price (round 5: 65.6 vs best 86.8)
-- Scores by round: 72.6 → 86.8 → 78.1 → 82.5 → 65.6
-- Next card: ditf, aggressive, slow, cooperative, gives_up=delivery
+  - QuickFurn accepts round-2 offers at target price when quality is conceded first.
+  - They value fast delivery and readily accept 11-day delivery.
+  - Cooperative tone keeps them engaged and willing to deal.
+  - They do not walk away from aggressive openings (70% of target).
+  - They concede little in round 1, expecting significant movement in round 2.
+  - Likely floor is near target price if we do not push lower in round 2.
+  - They reward speed and cooperation with quick acceptance.
+  - Best outcomes come from hitting target price with improved delivery.
+  - We may be leaving money on the table by not extracting concessions below target.
+  - Accepting at 85% of target in round 2 suggests room to improve price.
+- Failed: gives_up quality → price (round 3: 65.6 vs best 86.8); gives_up quality → delivery (round 4: 85.0 vs best 86.8); tactic ditf → fitd (round 5: 82.5 vs best 86.8)
+- Scores by round: 72.6 → 86.8 → 65.6 → 85.0 → 82.5
+- Next card: ditf, modest, slow, cooperative, gives_up=quality
 
 ### Harlow & Sons
-- Best card: ditf, modest, slow, cooperative, gives_up=quality (score 81.4, round 3)
-- Briefing: Start with a modest, easy-to-accept offer (standard + 14 days) to build momentum, then gradually introduce asks. Keep tone cooperative and concessions slow to encourage partnership and avoid triggering resistance.
+- Best card: fitd, modest, slow, cooperative, gives_up=quality (score 82.5, round 5)
+- Briefing: For the next deal, use a door-in-the-face tactic: start with a premium package (higher price, 7-day delivery), then retreat to your target. Keep tone cooperative, anchor modest, speed slow, and hold on quality first. This tests whether a stronger opening extracts more value without triggering walk-away.
 - Believed type: weak
 - Learned:
-  - Harlow & Sons accept round-2 offers without counter, indicating eagerness to close.
-  - They countered extreme openings with high asks but moved toward our position with cooperative framing.
-  - Final deals closed at 94% of target price, standard quality, and 14-day delivery.
-  - They value partnership and respond positively to fair, reasonable framing.
-  - They concede little on price unless pressed but accept reasonable compromises.
-  - Likely floor is near standard quality and 14–15 day delivery.
-  - They punish overly aggressive openings but reward steady, cooperative movement.
-  - Speed of concession is still too fast — we leave value on the table.
-  - Best to slow concessions and test if they hold firm on price.
-  - A modest anchor may improve opening reception without triggering walk-aways.
-- Failed: gives_up quality → price (round 4: 80.0 vs best 81.4); gives_up quality → delivery (round 5: 78.0 vs best 81.4)
-- Scores by round: 66.6 → 75.3 → 81.4 → 80.0 → 78.0
-- Next card: fitd, modest, slow, cooperative, gives_up=quality
+  - Harlow & Sons accepts round-1 offers immediately at 85% of target price with standard quality and 14-day delivery.
+  - They respond well to cooperative tone, moving significantly toward our position after high initial counters.
+  - They accept standard quality and are flexible on delivery when price is right.
+  - Their opening counters are high (e.g., 475 for chairs, 1307 for tables), showing strong initial asks.
+  - They reward cooperative tone and incremental progress with movement toward our offer.
+  - They punish perceived inflexibility or overly aggressive openings (none observed yet).
+  - They concede price relatively easily when engaged constructively and not rushed.
+  - Likely floor is near 330–350 for chairs and 820–880 for tables if we hold firm and concede slowly.
+  - Conceding quality too early limited leverage; holding quality may yield better margins.
+  - Slow concessions and cooperative framing have proven effective in closing deals.
+- Failed: gives_up quality → price (round 3: 71.3 vs best 75.3)
+- Scores by round: 66.6 → 75.3 → 71.3 → 80.2 → 82.5
+- Next card: ditf, modest, slow, cooperative, gives_up=quality
 
 ### ValueCraft
 - Best card: ditf, aggressive, slow, cooperative, gives_up=price (score 86.3, round 5)
-- Briefing: Start with a standard offer at target price and 14-day delivery (fitd), then gradually introduce premium quality or faster delivery only if they engage. Keep tone cooperative and concessions slow to build trust and avoid triggering resistance.
+- Briefing: Start with a reasonable offer (standard +14 days) to build trust, then gradually ask for better terms. Keep tone cooperative and concessions slow to maintain collaboration while improving price, quality, or delivery.
 - Believed type: weak
 - Learned:
-  - Accepts round-2 offers quickly when price hits target.
-  - Prioritizes cost efficiency over premium quality or fast delivery.
-  - Aggressive anchor ($266) drew a high counter ($456), showing room to negotiate.
-  - Conceded little on delivery in round 1 (35d → 24d), suggesting limited flexibility there.
-  - Gave up quality in round 2 but may have over-conceded on a low-value term.
-  - Responds well to cooperative tone and incremental moves.
-  - Likely floor is near $380 if we slow concessions and hold on quality.
-  - Does not walk away from moderate openings.
-  - Speed of concession influences how much we leave on the table.
-  - Premium terms are not valued; basic quality is sufficient.
+  - ValueCraft accepts round-2 offers without hesitation when price is near target
+  - They countered with high price (456) and long delivery (35d) initially
+  - They accepted basic quality and 24-day delivery when offered
+  - They respond well to cooperative tone and clear concessions
+  - They likely have a firm floor near 380 but may accept slightly less
+  - Fast concessions led to immediate acceptance at target, suggesting missed savings
+  - They do not walk away from aggressive opens (266/premium/7d)
+  - Price flexibility exists, but we gave up quality too fast in round 1
+  - Slowing concessions may extract better price without breaking deal
+  - They prioritize delivery and quality terms when price is fixed
 - Failed: anchor aggressive → modest (round 4: 72.2 vs best 81.0)
 - Scores by round: 53.0 → 69.5 → 81.0 → 72.2 → 86.3
 - Next card: fitd, aggressive, slow, cooperative, gives_up=price
 
 ## General tactics
 
-- Slow concession speed improves outcomes (QuickFurn, Harlow & Sons, ValueCraft)
-- Cooperative tone works well with suppliers who value partnership (QuickFurn, Harlow & Sons, ValueCraft)
-- Aggressive anchor paired with slow concessions and cooperative tone yields strong results (QuickFurn, Harlow & Sons, ValueCraft)
+- Slow concessions improve outcomes (QuickFurn, Harlow & Sons, ValueCraft)
+- Cooperative tone supports engagement (QuickFurn, Harlow & Sons, ValueCraft)
 
 ## Experiment log
 
@@ -97,14 +96,14 @@
 | 2 | Harlow & Sons | speed fast → slow | 66.6 → 75.3 | 0 | kept |
 | 2 | ValueCraft | speed fast → slow | 53.0 → 69.5 | 0 | kept |
 | 3 | Northwood Timber | gives_up quality → price | 77.3 → 62.3 | 0 | discarded |
-| 3 | QuickFurn | anchor aggressive → modest | 86.8 → 78.1 | 0 | discarded |
-| 3 | Harlow & Sons | anchor aggressive → modest | 75.3 → 81.4 | 0 | kept |
+| 3 | QuickFurn | gives_up quality → price | 86.8 → 65.6 | 0 | discarded |
+| 3 | Harlow & Sons | gives_up quality → price | 75.3 → 71.3 | 0 | discarded |
 | 3 | ValueCraft | gives_up quality → delivery | 69.5 → 81.0 | 0 | kept |
 | 4 | Northwood Timber | gives_up quality → delivery | 77.3 → 54.2 | 0 | discarded |
-| 4 | QuickFurn | tactic ditf → fitd | 86.8 → 82.5 | 0 | discarded |
-| 4 | Harlow & Sons | gives_up quality → price | 81.4 → 80.0 | 0 | discarded |
+| 4 | QuickFurn | gives_up quality → delivery | 86.8 → 85.0 | 0 | discarded |
+| 4 | Harlow & Sons | tactic ditf → fitd | 75.3 → 80.2 | 0 | kept |
 | 4 | ValueCraft | anchor aggressive → modest | 81.0 → 72.2 | 0 | discarded |
 | 5 | Northwood Timber | speed fast → slow | 77.3 → 77.3 | 0 | discarded |
-| 5 | QuickFurn | gives_up quality → price | 86.8 → 65.6 | 0 | discarded |
-| 5 | Harlow & Sons | gives_up quality → delivery | 81.4 → 78.0 | 0 | discarded |
+| 5 | QuickFurn | tactic ditf → fitd | 86.8 → 82.5 | 0 | discarded |
+| 5 | Harlow & Sons | anchor aggressive → modest | 80.2 → 82.5 | 0 | kept |
 | 5 | ValueCraft | gives_up delivery → price | 81.0 → 86.3 | 0 | kept |
