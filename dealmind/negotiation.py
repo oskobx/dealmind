@@ -7,6 +7,7 @@ Debug entry point:  uv run python -m dealmind.negotiation --supplier northwood [
 from __future__ import annotations
 
 import argparse
+import re
 from dataclasses import dataclass, replace
 
 from dealmind import config, events, llm
@@ -99,24 +100,72 @@ def _fallback_voice(supplier: SupplierCard, decision: Decision) -> str:
     return f"This is not a serious offer. {supplier.name} is done here."
 
 
-def supplier_voice(supplier: SupplierCard, decision: Decision, buyer_message: str, seed: int | None = None) -> str:
-    """§6.5 persona prompt. The persona is the stable system prompt; the decision goes in the user turn."""
+_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+_NUMBER_WORDS = re.compile(
+    r"\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|"
+    r"seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million)\b",
+    re.IGNORECASE,
+)
+
+
+def numbers_in(text: str) -> set[float]:
+    """Every number written in digits, with thousands separators removed."""
+    return {float(m.replace(",", "")) for m in _NUMBER.findall(text)}
+
+
+def allowed_numbers(buyer_offer: Offer, buyer_message: str, decision: Decision) -> set[float]:
+    """The numbers a supplier reply may contain: the buyer's offer and message, and the decision's terms."""
+    allowed = {float(buyer_offer.price), float(buyer_offer.delivery_days)} | numbers_in(buyer_message)
+    if decision.offer is not None:
+        allowed |= {float(decision.offer.price), float(decision.offer.delivery_days)}
+    return allowed
+
+
+def reply_numbers_ok(text: str, allowed: set[float]) -> bool:
+    """§6.2: the voice must not change or invent numbers. Spelled-out numbers count as a failure."""
+    if _NUMBER_WORDS.search(text):
+        return False
+    return numbers_in(text) <= allowed
+
+
+def supplier_voice(
+    supplier: SupplierCard,
+    decision: Decision,
+    buyer_message: str,
+    buyer_offer: Offer,
+    seed: int | None = None,
+) -> str:
+    """§6.5 persona prompt. The persona is the stable system prompt; the decision goes in the user turn.
+    The reply is validated in code: every number must come from the buyer's offer or the decision;
+    on a mismatch retry once, then use the template."""
     system = (
         f"You are the sales manager at {supplier.name}, a furniture supplier. Personality: {supplier.persona}\n"
         "You are replying to a buyer from a furniture shop chain. Write 2-4 sentences in character. "
-        "Do not change any number. Do not invent new terms. Reply with the message text only."
+        "Do not change any number. Do not invent new terms or numbers. Write every number as digits exactly as "
+        "given (for example '732 per piece', '21 days'); never spell numbers out in words. Reply with the message text only."
     )
     user = (
         f'The buyer wrote: "{buyer_message.strip()}"\n'
         f"Your decision for this turn has already been made: {_decision_line(decision)}\n"
         "Write your reply."
     )
-    try:
-        text = llm.chat("supplier", config.MODEL_SUPPLIER, [{"role": "system", "content": system}, {"role": "user", "content": user}], seed=seed)
-    except llm.LLMError as exc:
-        events.emit("supplier_llm_error", supplier=supplier.key, error=str(exc))
-        text = ""
-    return text.strip().strip('"') or _fallback_voice(supplier, decision)
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    allowed = allowed_numbers(buyer_offer, buyer_message, decision)
+    for attempt in (1, 2):
+        try:
+            text = llm.chat("supplier", config.MODEL_SUPPLIER, messages, seed=seed).strip().strip('"')
+        except llm.LLMError as exc:
+            events.emit("supplier_llm_error", supplier=supplier.key, error=str(exc))
+            break
+        if text and reply_numbers_ok(text, allowed):
+            return text
+        events.emit("supplier_voice_rejected", supplier=supplier.key, attempt=attempt, text=text[:200])
+        messages = [
+            *messages,
+            {"role": "assistant", "content": text or "(empty)"},
+            {"role": "user", "content": "Your reply changed, invented or spelled out a number. Rewrite it using only the numbers given, as digits."},
+        ]
+    return _fallback_voice(supplier, decision)
 
 
 # --- §5 the loop -------------------------------------------------------------
@@ -172,7 +221,7 @@ def negotiate(
 
         decision = respond(supplier, target, round_no, turn.offer, obs)
         exchange.decision = decision
-        exchange.supplier_message = supplier_voice(supplier, decision, turn.message, seed)
+        exchange.supplier_message = supplier_voice(supplier, decision, turn.message, turn.offer, seed)
         events.emit("supplier_turn", supplier=supplier.key, round=round_no, action=decision.action, offer=decision.offer.__dict__ if decision.offer else None, message=exchange.supplier_message)
         tell(f"     [tone: {exchange.tone_label}]\n  R{round_no} SUPPLIER {decision.action}" + (f" {_fmt(decision.offer)}" if decision.offer else "") + f"\n     \"{exchange.supplier_message}\"")
 
