@@ -555,7 +555,7 @@
     s.dots.pointBackgroundColor[round - 1] = result === 'discarded' ? '#ffffff' : s.color;
     chart.update();
     const room = rooms[key];
-    if (room) room.setRoundScores(s.dots.data.filter(v => v !== null && v !== undefined));
+    if (room) room.setRoundScores(s.line.data.filter(v => v !== null && v !== undefined));  // best so far per round
   }
 
   // ---------- coach panel ----------
