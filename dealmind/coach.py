@@ -15,6 +15,7 @@ from dealmind.cards import (
     card_from_dict,
     card_key,
     card_label,
+    default_card,
     describe_change,
     diff_knobs,
     mutate_one_knob,
@@ -380,3 +381,36 @@ def update_general_tactics(state: PlaybookState, round_no: int) -> list[str]:
         return state.general_tactics
     events.emit("general_tactics", round=round_no, tactics=valid, rejected=rejected)
     return valid
+
+
+# --- §10 drafting for a supplier nobody has met ------------------------------
+
+
+def draft_for_new_supplier(general_tactics: list[str]) -> tuple[Card, str, str, str]:
+    """§10 informed arm: a starting card and briefing from the General tactics only. The coach is told
+    nothing about the supplier, not even its name. Returns (card, briefing, believed_type, why)."""
+    tactics = "\n".join(f"- {t}" for t in general_tactics) or "(empty)"
+    user = (
+        "A new supplier is coming up. Nothing is known about it: personality unknown, no history, no dossier. "
+        "Using only the team's General tactics below, draft the specialist's starting card and briefing.\n\n"
+        f"General tactics:\n{tactics}\n\n"
+        'Return JSON only: {"card": {"tactic": "fitd" | "ditf", "anchor": "modest" | "aggressive", '
+        '"speed": "slow" | "fast", "tone": "firm" | "cooperative", "gives_up": "price" | "quality" | "delivery"}, '
+        '"why": "one sentence", "briefing": "up to 80 words the negotiator reads before the deal", '
+        '"believed_type": "strong" | "weak"}'
+    )
+    parsed = _ask(COACH_INTRO + "\nReply with JSON only.", user, COACH_MAX_TOKENS, seed=0)
+    card, briefing, believed, why = default_card(), "", config.DEFAULT_BELIEVED_TYPE, "no proposal; default card used"
+    if parsed:
+        raw_card = parsed.get("card") or {}
+        try:
+            card = card_from_dict({k: str(v).strip().lower() for k, v in raw_card.items()})
+            why = " ".join(str(parsed.get("why") or "").split())
+        except (KeyError, ValueError, AttributeError):
+            why = f"invalid card {raw_card!r}; default card used"
+        briefing = clip_words(parsed.get("briefing") or "", MAX_BRIEFING_WORDS)
+        proposed_type = str(parsed.get("believed_type") or "").strip().lower()
+        if proposed_type in config.ROUND3_CLAIM:
+            believed = proposed_type
+    events.emit("ridgeline_draft", card=card.as_dict(), briefing=briefing, believed_type=believed, why=why)
+    return card, briefing, believed, why

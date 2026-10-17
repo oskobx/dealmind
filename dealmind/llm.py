@@ -149,6 +149,26 @@ class _Gate:
 
 _gate = _Gate()
 
+# §7.1 optional NeMo Switchyard router for negotiator calls (off unless run.py --router switchyard)
+_router_base_url: str | None = None
+_router_client: OpenAI | None = None
+
+
+def set_router(base_url: str | None) -> None:
+    """Route negotiator calls through a local Switchyard proxy at `base_url`; None turns it off."""
+    global _router_base_url, _router_client
+    _router_base_url = base_url
+    _router_client = None
+
+
+def _get_router_client() -> OpenAI:
+    global _router_client
+    with _client_lock:
+        if _router_client is None:
+            key = os.environ.get(config.API_KEY_ENV) or "none"  # the local proxy holds the real key itself
+            _router_client = OpenAI(base_url=_router_base_url, api_key=key, max_retries=0, timeout=REQUEST_TIMEOUT_SECONDS)
+        return _router_client
+
 
 def _retry_after(exc: Exception) -> float | None:
     response = getattr(exc, "response", None)
@@ -168,7 +188,7 @@ def _rate_headers(headers) -> dict[str, str]:
 # --- the call ----------------------------------------------------------------
 
 
-def _create(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None):
+def _create(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None, client: OpenAI | None = None):
     settings = ROLE_SETTINGS.get(role, DEFAULT_SETTINGS)
     kwargs = dict(
         model=model,
@@ -181,19 +201,19 @@ def _create(role: str, model: str, messages: list[dict], max_tokens: int, seed: 
     )
     if seed is not None:
         kwargs["seed"] = seed
-    return _get_client().chat.completions.with_raw_response.create(**kwargs)
+    return (client or _get_client()).chat.completions.with_raw_response.create(**kwargs)
 
 
-def _attempt(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None):
+def _attempt(role: str, model: str, messages: list[dict], max_tokens: int, seed: int | None, client: OpenAI | None = None, retry: bool = True):
     """One paced request with backoff on transient errors. Returns (raw_response, attempts)."""
     for attempt, delay in enumerate([*config.RETRY_BACKOFF_SECONDS, None], start=1):
         if _pacer is not None:
             _pacer.wait(model)
         try:
             with _gate.slot(model):
-                return _create(role, model, messages, max_tokens, seed), attempt
+                return _create(role, model, messages, max_tokens, seed, client), attempt
         except RETRYABLE as exc:
-            if delay is None:
+            if delay is None or not retry:
                 raise LLMError(f"{role}/{model}: gave up after {attempt} attempts: {type(exc).__name__}") from exc
             sleep_for = _retry_after(exc) or (delay + random.uniform(0, JITTER_SECONDS))
             events.emit("llm_retry", role=role, model=model, attempt=attempt, error=type(exc).__name__, sleep_s=round(sleep_for, 2))
@@ -201,16 +221,19 @@ def _attempt(role: str, model: str, messages: list[dict], max_tokens: int, seed:
     raise AssertionError("unreachable")
 
 
-def chat_full(
+def _complete(
     role: str,
     model: str,
     messages: list[dict],
-    max_tokens: int = config.DEFAULT_MAX_TOKENS,
-    seed: int | None = None,
+    max_tokens: int,
+    seed: int | None,
+    client: OpenAI | None = None,
+    retry: bool = True,
+    via_router: bool = False,
 ) -> LLMResponse:
     """Call a model and return content plus metadata. Logs an `llm_call` event (never the key)."""
     started = time.perf_counter()
-    raw, attempts = _attempt(role, model, messages, max_tokens, seed)
+    raw, attempts = _attempt(role, model, messages, max_tokens, seed, client, retry)
     completion = raw.parse()
     message = completion.choices[0].message.model_dump()
     content = (message.get("content") or "").strip()
@@ -219,7 +242,7 @@ def chat_full(
 
     if not content:  # §7.2: a reasoning phase ate the budget; retry once with more room
         events.emit("llm_empty_content", role=role, model=model, finish_reason=finish_reason, max_tokens=max_tokens)
-        raw, attempts = _attempt(role, model, messages, max(config.RETRY_MAX_TOKENS, 2 * max_tokens), seed)
+        raw, attempts = _attempt(role, model, messages, max(config.RETRY_MAX_TOKENS, 2 * max_tokens), seed, client, retry)
         completion = raw.parse()
         message = completion.choices[0].message.model_dump()
         content = (message.get("content") or "").strip()
@@ -253,9 +276,27 @@ def chat_full(
         cached_tokens=response.cached_tokens,
         finish_reason=response.finish_reason,
         attempts=response.attempts,
+        via_router=via_router,
         rate=_rate_headers(raw.headers),
     )
     return response
+
+
+def chat_full(
+    role: str,
+    model: str,
+    messages: list[dict],
+    max_tokens: int = config.DEFAULT_MAX_TOKENS,
+    seed: int | None = None,
+) -> LLMResponse:
+    """Call a model. With the Switchyard router on, negotiator calls go to the proxy as model
+    "negotiator" (§7.1); if the proxy is down or errors, fall back to direct Nano and log it."""
+    if role == "negotiator" and _router_base_url:
+        try:
+            return _complete(role, config.SWITCHYARD_MODEL, messages, max_tokens, seed, _get_router_client(), retry=False, via_router=True)
+        except Exception as exc:  # never crash the demo over the router
+            events.emit("router_fallback", error=f"{type(exc).__name__}: {str(exc)[:200]}")
+    return _complete(role, model, messages, max_tokens, seed)
 
 
 def chat(
